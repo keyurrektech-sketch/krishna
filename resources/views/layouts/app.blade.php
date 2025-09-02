@@ -16,10 +16,10 @@
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     
-    <title>{{ $settings->tagline }}</title>
+    <title>{{ $settings->tagline ?? ''}}</title>
     <!--! END:  Apps Title-->
     <!--! BEGIN: Favicon-->
-    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('uploads/'.$settings->favicon) }}">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ $settings && $settings->favicon ? asset('uploads/'.$settings->favicon) : asset('uploads/user.png') }}">
     <!--! END: Favicon-->
     <!--! BEGIN: Bootstrap CSS-->
     <link rel="stylesheet" type="text/css" href="{{ asset('build/assets/css/bootstrap.min.css') }}">

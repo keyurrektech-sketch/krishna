@@ -8,8 +8,8 @@
                         <img src="{{ asset('uploads/'.$settings->logo) }}" alt="Small Logo" class="logo logo-sm" style="max-height:30px;" />
                     @else
                         <!-- Fallback default logos -->
-                        <h1 class="logo logo-lg">{{ $settings->name }}</h1>
-                        <h1 class="logo logo-sm">{{ $settings->name }}</h1>
+                        <h1 class="logo logo-lg">{{ $settings->name ?? '' }}</h1>
+                        <h1 class="logo logo-sm">{{ $settings->name ?? ''}}</h1>
                     @endif
                 </a>
             </div>
@@ -40,7 +40,7 @@
 
                     
                     <li class="nxl-item">
-                        <a class="nav-link nxl-link" href="{{ route('settings.edit',  $settings->id ) }}">
+                        <a class="nav-link nxl-link" href="{{ route('settings.edit') }}">
                             <span class="nxl-micon"><i class="feather-settings"></i></span> 
                             <span class="nxl-mtext">Settings</span>                                
                         </a>

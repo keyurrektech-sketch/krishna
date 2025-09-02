@@ -28,9 +28,8 @@
                                 <h5 class="card-title">Site Settings</h5>
                             </div>
                             <hr class="mt-0">
-                            <form method="POST" action="{{ route('settings.update', $settings->id) }}"  enctype="multipart/form-data">
+                            <form method="POST" action="{{ route('settings.update') }}"  enctype="multipart/form-data">
                             @csrf
-                            @method('PUT')
                                 <div class="card-body general-info">
                                     @if(isset($settings->logo))
                                         <div class="row mb-4">  
@@ -63,7 +62,7 @@
                                         <div class="col-lg-8">
                                             <div class="input-group">
                                                 <div class="input-group-text"><i class="feather-briefcase"></i></div>
-                                                <input type="text" name="name" placeholder="Name" class="form-control"  id="fullnameInput"  value="{{ old('name', $settings->name ?: '') }}">
+                                                <input type="text" name="name" placeholder="Name" class="form-control"  id="fullnameInput"  value="{{ old('name', $settings->name ?? '') }}">
                                             </div>
                                             @error('name')<div class="text-danger">{{ $message }}</div>@enderror
                                         </div>
@@ -75,7 +74,7 @@
                                         <div class="col-lg-8">
                                             <div class="input-group">
                                                 <div class="input-group-text"><i class="feather-type"></i></div>
-                                                <input type="text" name="tagline" placeholder="Tagline" class="form-control"  id="tagline"  value="{{ old('tagline', $settings->tagline ?: '') }}">
+                                                <input type="text" name="tagline" placeholder="Tagline" class="form-control"  id="tagline"  value="{{ old('tagline', $settings->tagline ?? '') }}">
                                             </div>
                                             @error('tagline')<div class="text-danger">{{ $message }}</div>@enderror
                                         </div>
@@ -111,7 +110,7 @@
                                         <div class="col-lg-8">
                                             <div class="input-group">
                                                 <div class="input-group-text"><i class="feather-hash"></i></div>
-                                                <input type="text" name="gst_number" maxlength="15" placeholder="GST Number" class="form-control"  id="gst_number"  value="{{ old('gst_number', $settings->gst_number ?: '') }}">
+                                                <input type="text" name="gst_number" maxlength="15" placeholder="GST Number" class="form-control"  id="gst_number"  value="{{ old('gst_number', $settings->gst_number ?? '') }}">
                                             </div>
                                             @error('gst_number')<div class="text-danger">{{ $message }}</div>@enderror
                                         </div>
@@ -123,7 +122,7 @@
                                         <div class="col-lg-8">
                                             <div class="input-group">
                                                 <div class="input-group-text"><i class="feather-map-pin"></i></div>
-                                                <textarea name="address" placeholder="Address" class="form-control"  id="address">{{ old('address', $settings->address ?: '') }}</textarea>
+                                                <textarea name="address" placeholder="Address" class="form-control"  id="address">{{ old('address', $settings->address ?? '') }}</textarea>
                                             </div>
                                             @error('address')<div class="text-danger">{{ $message }}</div>@enderror
                                         </div>
@@ -135,7 +134,7 @@
                                         <div class="col-lg-8">
                                             <div class="input-group">
                                                 <div class="input-group-text"><i class="feather-map-pin"></i></div>
-                                                <input type="url" name="location" placeholder="Location" class="form-control"  id="location"  value="{{ old('location', $settings->location ?: '') }}">
+                                                <input type="url" name="location" placeholder="Location" class="form-control"  id="location"  value="{{ old('location', $settings->location ?? '') }}">
                                             </div>
                                             @error('location')<div class="text-danger">{{ $message }}</div>@enderror
                                         </div>
@@ -147,7 +146,7 @@
                                         <div class="col-lg-8">
                                             <div class="input-group">
                                                 <div class="input-group-text"><i class="feather-phone"></i></div>
-                                                <input type="phone" name="contact_number" placeholder="Contact Number" class="form-control"  id="contact_number"  value="{{ old('contact_number', $settings->contact_number ?: '') }}">
+                                                <input type="phone" name="contact_number" placeholder="Contact Number" class="form-control"  id="contact_number"  value="{{ old('contact_number', $settings->contact_number ?? '') }}">
                                             </div>
                                             @error('contact_number')<div class="text-danger">{{ $message }}</div>@enderror
                                         </div>
@@ -159,7 +158,7 @@
                                         <div class="col-lg-8">
                                             <div class="input-group">
                                                 <div class="input-group-text"><i class="feather-message-circle"></i></div>
-                                                <input type="phone" name="whatsapp_number" placeholder="Whatsapp Number" class="form-control"  id="whatsapp_number"  value="{{ old('whatsapp_number', $settings->whatsapp_number ?: '') }}">
+                                                <input type="phone" name="whatsapp_number" placeholder="Whatsapp Number" class="form-control"  id="whatsapp_number"  value="{{ old('whatsapp_number', $settings->whatsapp_number ?? '') }}">
                                             </div>
                                             @error('whatsapp_number')<div class="text-danger">{{ $message }}</div>@enderror
                                         </div>
@@ -171,7 +170,7 @@
                                         <div class="col-lg-8">
                                             <div class="input-group">
                                                 <div class="input-group-text"><i class="feather-circle"></i></div>
-                                                <input type="text" name="copyright" placeholder="Copyright" class="form-control"  id="copyright"  value="{{ old('copyright', $settings->copyright ?: '') }}">
+                                                <input type="text" name="copyright" placeholder="Copyright" class="form-control"  id="copyright"  value="{{ old('copyright', $settings->copyright ?? '') }}">
                                             </div>
                                             @error('copyright')<div class="text-danger">{{ $message }}</div>@enderror
                                         </div>
@@ -184,7 +183,7 @@
                                         <div class="col-lg-8">
                                             <div class="input-group">
                                                 <div class="input-group-text"><i class="feather-facebook"></i></div>
-                                                <input type="url" name="facebook" placeholder="Facebook" class="form-control"  id="facebook"  value="{{ old('facebook', $settings->facebook ?: '') }}">
+                                                <input type="url" name="facebook" placeholder="Facebook" class="form-control"  id="facebook"  value="{{ old('facebook', $settings->facebook ?? '') }}">
                                             </div>
                                             @error('facebook')<div class="text-danger">{{ $message }}</div>@enderror
                                         </div>
@@ -196,7 +195,7 @@
                                         <div class="col-lg-8">
                                             <div class="input-group">
                                                 <div class="input-group-text"><i class="feather-twitter"></i></div>
-                                                <input type="url" name="twitter" placeholder="Twitter" class="form-control"  id="twitter"  value="{{ old('twitter', $settings->twitter ?: '') }}">
+                                                <input type="url" name="twitter" placeholder="Twitter" class="form-control"  id="twitter"  value="{{ old('twitter', $settings->twitter ?? '') }}">
                                             </div>
                                             @error('twitter')<div class="text-danger">{{ $message }}</div>@enderror
                                         </div>
@@ -208,7 +207,7 @@
                                         <div class="col-lg-8">
                                             <div class="input-group">
                                                 <div class="input-group-text"><i class="feather-instagram"></i></div>
-                                                <input type="url" name="instagram" placeholder="Instagram" class="form-control"  id="instagram"  value="{{ old('instagram', $settings->instagram ?: '') }}">
+                                                <input type="url" name="instagram" placeholder="Instagram" class="form-control"  id="instagram"  value="{{ old('instagram', $settings->instagram ?? '') }}">
                                             </div>
                                             @error('instagram')<div class="text-danger">{{ $message }}</div>@enderror
                                         </div>
@@ -220,7 +219,7 @@
                                         <div class="col-lg-8">
                                             <div class="input-group">
                                                 <div class="input-group-text"><i class="feather-linkedin"></i></div>
-                                                <input type="url" name="linkedin" placeholder="Linkedin" class="form-control"  id="linkedin"  value="{{ old('linkedin', $settings->linkedin ?: '') }}">
+                                                <input type="url" name="linkedin" placeholder="Linkedin" class="form-control"  id="linkedin"  value="{{ old('linkedin', $settings->linkedin ?? '') }}">
                                             </div>
                                             @error('linkedin')<div class="text-danger">{{ $message }}</div>@enderror
                                         </div>
@@ -232,7 +231,7 @@
                                         <div class="col-lg-8">
                                             <div class="input-group">
                                                 <div class="input-group-text"><i class="feather-youtube"></i></div>
-                                                <input type="url" name="youtube" placeholder="Youtube" class="form-control"  id="youtube"  value="{{ old('youtube', $settings->youtube ?: '') }}">
+                                                <input type="url" name="youtube" placeholder="Youtube" class="form-control"  id="youtube"  value="{{ old('youtube', $settings->youtube ?? '') }}">
                                             </div>
                                             @error('youtube')<div class="text-danger">{{ $message }}</div>@enderror
                                         </div>

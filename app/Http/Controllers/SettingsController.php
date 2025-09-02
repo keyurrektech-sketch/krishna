@@ -8,14 +8,17 @@ use Illuminate\Validation\Rule;
 
 class SettingsController extends Controller
 {
-    public function edit(Settings $settings)
+    public function edit()
     {
+        $settings = Settings::first();
         return view('admin.settings', compact('settings'));
     }
 
     
-    public function update(Request $request, Settings $settings)
+    public function update(Request $request)
     {
+        $settings = Settings::first();
+    
         $validated = $request->validate([
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', 
             'name' => 'required|max:255',
@@ -26,7 +29,7 @@ class SettingsController extends Controller
                 'string',
                 'size:15',
                 'regex:/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9A-Z]{1}Z[0-9A-Z]{1}$/',
-                Rule::unique('settings', 'gst_number')->ignore($settings->id),
+                Rule::unique('settings', 'gst_number')->ignore($settings?->id),
             ],
             'address' => 'nullable|string|max:500',
             'location' => 'nullable|url|max:255',
@@ -41,52 +44,31 @@ class SettingsController extends Controller
             'authorized_signatory' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
         ]);
     
-        if ($request->hasFile('logo')) {
-            if ($settings->logo) {
-                $oldPath = public_path('uploads/' . $settings->logo);
-                if (file_exists($oldPath)) {
-                    unlink($oldPath);
+        // handle file uploads
+        foreach (['logo', 'favicon', 'authorized_signatory'] as $field) {
+            if ($request->hasFile($field)) {
+                if (!empty($settings?->$field)) {
+                    $oldPath = public_path('uploads/' . $settings->$field);
+                    if (file_exists($oldPath)) {
+                        unlink($oldPath);
+                    }
                 }
+                $image = $request->file($field);
+                $image_name = uniqid() . "." . $image->getClientOriginalExtension();
+                $image->move(public_path('uploads'), $image_name);
+                $validated[$field] = $image_name;
             }
-    
-            $image = $request->file('logo');
-            $image_name = uniqid() . "." . $image->getClientOriginalExtension();
-            $image->move(public_path('uploads'), $image_name);
-            $validated['logo'] = $image_name;
         }
-
-        if ($request->hasFile('favicon')) {
-            if ($settings->favicon) {
-                $oldPath = public_path('uploads/' . $settings->favicon);
-                if (file_exists($oldPath)) {
-                    unlink($oldPath);
-                }
-            }
     
-            $image = $request->file('favicon');
-            $image_name = uniqid() . "." . $image->getClientOriginalExtension();
-            $image->move(public_path('uploads'), $image_name);
-            $validated['favicon'] = $image_name;
+        // create or update
+        if ($settings) {
+            $settings->update($validated);
+        } else {
+            $settings = Settings::create($validated);
         }
-
-        if ($request->hasFile('authorized_signatory')) {
-            if ($settings->authorized_signatory) {
-                $oldPath = public_path('uploads/' . $settings->authorized_signatory);
-                if (file_exists($oldPath)) {
-                    unlink($oldPath);
-                }
-            }
     
-            $image = $request->file('authorized_signatory');
-            $image_name = uniqid() . "." . $image->getClientOriginalExtension();
-            $image->move(public_path('uploads'), $image_name);
-            $validated['authorized_signatory'] = $image_name;
-        }
-
-        $settings->update($validated);
-    
-        
-    return redirect()->route('settings.edit', $settings->id)->with('success', 'Settings Updated Successfully');
+        return redirect()->route('settings.edit')->with('success', 'Settings Updated Successfully');
     }
+    
     
 }

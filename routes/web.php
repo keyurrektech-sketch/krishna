@@ -26,8 +26,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('roles', RoleController::class);
     Route::resource('users', UserController::class);
 
-    Route::get('/settings/{settings}/edit', [SettingsController::class, 'edit'])->name('settings.edit');
-    Route::put('/settings/{settings}', [SettingsController::class, 'update'])->name('settings.update');
-    
+    Route::get('/settings/edit', [SettingsController::class, 'edit'])->name('settings.edit');
+    Route::post('/settings/update', [SettingsController::class, 'update'])->name('settings.update');
 
 });
