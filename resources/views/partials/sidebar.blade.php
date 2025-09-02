@@ -38,6 +38,12 @@
                         </li>
                     @endcan
 
+                    <li class="nxl-item">
+                        <a class="nav-link nxl-link" href="{{ route('sales.index') }}">
+                            <span class="nxl-micon"><i class="feather-truck"></i></span> 
+                            <span class="nxl-mtext">Sales</span>                                
+                        </a>
+                    </li>
                     
                     <li class="nxl-item">
                         <a class="nav-link nxl-link" href="{{ route('settings.edit') }}">
@@ -66,7 +72,7 @@
                 <!--! [Start] nxl-navigation-toggle !-->
                 <div class="nxl-navigation-toggle">
                     <a href="javascript:void(0);" id="menu-mini-button">
-                        <i class="feather-align-left"></i>
+                        <i class="feather-align-justify"></i>
                     </a>
                     <a href="javascript:void(0);" id="menu-expend-button" style="display: none">
                         <i class="feather-arrow-right"></i>
