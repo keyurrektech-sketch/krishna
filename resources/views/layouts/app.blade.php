@@ -68,6 +68,18 @@
     <script src="{{ asset('build/assets/js/theme-customizer-init.min.js')}}"></script>
     <!--! END: Theme Customizer !-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('build/assets/js/main.js') }}"></script>
+
+    <!-- Allow pages to push custom scripts -->
+    <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    </script>
+
+    @stack('scripts')
 
 </body>
 </html>

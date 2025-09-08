@@ -10,6 +10,7 @@ use Hash;
 use Illuminate\Support\Arr;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class UserController extends Controller
 {
@@ -23,7 +24,11 @@ class UserController extends Controller
     public function create(): View
     {
         $roles = Role::pluck('name', 'name')->all();
-        return view('users.create', compact('roles'));
+        
+        $lastUser = User::latest('id')->first();
+        $nextId = $lastUser ? $lastUser->id + 1 : 1;
+
+        return view('users.create', compact('roles', 'nextId'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -150,4 +155,39 @@ class UserController extends Controller
         return redirect()->route('users.index')
             ->with('success', 'User deleted successfully');
     }
+
+    // public function register(Request $request)
+    // {
+    //     $this->validate($request, [
+    //         'username' => 'required|string|max:50|unique:users,username',
+    //     ]);
+
+    //     $username = trim($request->username);
+    //     $password = \Illuminate\Support\Str::random(10);
+
+    //     $user = User::create([
+    //         'name' => $username,
+    //         'username' => $username,
+    //         'email' => 'temp_' . uniqid() . '@gmail.com',
+    //         'password' => Hash::make($password),
+    //     ]);
+
+    //     $cleanUsername = preg_replace('/[^a-z0-9]/i', '', strtolower($username));
+    //     $email = $cleanUsername . $user->id . '@gmail.com';
+    //     $user->update(['email' => $email]);
+
+    //     $defaultRole = 'admin';
+    //     if (Role::where('name', $defaultRole)->exists()) {
+    //         $user->assignRole($defaultRole);
+    //     }
+
+    //     $pdf = Pdf::loadView('users.pdf', [
+    //         'username' => $username,
+    //         'email'    => $email,
+    //         'password' => $password,
+    //         'created_at' => $user->created_at->format('d-m-Y H:i:s'),
+    //     ]);
+
+    //     return $pdf->download('User_Credentials.pdf');
+    // }
 }

@@ -12,10 +12,10 @@ class SalesController extends Controller
         // $sales = Sales::all();
         return view('sales.index');    
     }
-    public function create()
+    public function create(Sales $sales)
     {
         // $sales = Sales::all();
-        return view('sales.create-sales');    
+        return view('sales.create-sales', compact('sales'));    
     }
     public function show()
     {

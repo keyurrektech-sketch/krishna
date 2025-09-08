@@ -23,12 +23,16 @@ Auth::routes();
 // Home page after login
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
+Route::post('/register', [UserController::class, 'register'])->name('users.register');
+
 // Protected routes (only accessible when logged in)
 Route::middleware(['auth'])->group(function () {
     Route::resource('roles', RoleController::class);
     Route::resource('users', UserController::class);
     Route::resource('sales', SalesController::class);
     Route::resource('vehicle', VehicleController::class);
+
+    Route::post('/vehicle/fetch-details', [VehicleController::class, 'fetchDetails'])->name('vehicle.details');
 
     Route::get('/settings/edit', [SettingsController::class, 'edit'])->name('settings.edit');
     Route::post('/settings/update', [SettingsController::class, 'update'])->name('settings.update');
