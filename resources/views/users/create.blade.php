@@ -35,9 +35,9 @@
                                 <div class="card-body general-info">
                                     <div class="row mb-4 align-items-center">
                                         <div class="col-lg-4">
-                                            <label for="challan_number" class="fw-semibold mb-2">EMPLOYEE NUMBER: </label>
+                                            <label for="challan_number" class="fw-semibold mb-2">EMPLOYEE NUMBER </label>
                                             <div class="input-group">
-                                                <div class="input-group-text">E_</div>
+                                                <div class="input-group-text">KME_</div>
                                                 <input type="text" name="id" placeholder="EMPLOYEE NUMBER" class="form-control"  id="id"  value="{{ old('id', $nextId) }}" readonly>
                                                 @error('id')<div class="text-danger">{{ $message }}</div>@enderror
                                             </div>
@@ -45,36 +45,36 @@
                                     </div>
                                     <div class="row mb-4 align-items-center">
                                         <div class="col-lg-6">
-                                            <label for="username" class="fw-semibold">NAME: </label>
+                                            <label for="username" class="fw-semibold">NAME </label>
                                             <input type="text" name="username" placeholder="USER NAME" class="form-control"  id="username"  value="{{ old('username') }}">
                                             @error('username')<div class="text-danger">{{ $message }}</div>@enderror
                                         </div>
                                         <div class="col-lg-6">
-                                            <label for="birthdate" class="fw-semibold">BIRTHDATE: </label>
+                                            <label for="birthdate" class="fw-semibold">BIRTHDATE </label>
                                             <input type="date" name="birthdate" placeholder="Birthdate" class="form-control" id="birthdate" value="{{ old('birthdate') }}">
                                             @error('birthdate')<div class="text-danger">{{ $message }}</div>@enderror
                                         </div>
                                     </div>
                                     <div class="row mb-4 align-items-center">
                                         <div class="col-lg-4">
-                                            <label for="contact_number_1" class="fw-semibold">MOBILE NUMBER 1:</label>
+                                            <label for="contact_number_1" class="fw-semibold">MOBILE NUMBER 1</label>
                                             <input type="phone" name="contact_number_1" placeholder="CONTACT NUMBER - 1" class="form-control"  id="contact_number_1"  value="{{ old('contact_number_1') }}">
                                             @error('contact_number_1')<div class="text-danger">{{ $message }}</div>@enderror
                                         </div>  
                                         <div class="col-lg-4">
-                                            <label for="contact_number_2" class="fw-semibold">MOBILE NUMBER 2:</label>
+                                            <label for="contact_number_2" class="fw-semibold">MOBILE NUMBER 2</label>
                                             <input type="phone" name="contact_number_2" placeholder="CONTACT NUMBER - 2" class="form-control"  id="contact_number_2"  value="{{ old('contact_number_2') }}">
                                             @error('contact_number_2')<div class="text-danger">{{ $message }}</div>@enderror
                                         </div>  
                                         <div class="col-lg-4">
-                                            <label for="joining_date" class="fw-semibold">JOINING DATE:</label>
-                                            <input type="date" name="joining_date" class="form-control date" id="date" value="{{ old('joining_date') }}">
+                                            <label for="joining_date" class="fw-semibold">JOINING DATE</label>
+                                            <input type="date" name="joining_date" class="form-control date" id="date" value="{{ old('joining_date') }}" readonly>
                                             @error('joining_date')<div class="text-danger">{{ $message }}</div>@enderror
                                         </div>  
                                     </div>
                                     <div class="row mb-4 align-items-center">  
                                         <div class="col-md-4">
-                                            <label for="user_photo" class="fw-semibold">UPLOAD IMAGE:</label>
+                                            <label for="user_photo" class="fw-semibold">UPLOAD IMAGE</label>
                                             @if(isset($settings->user_photo))
                                             <a href="{{ asset('uploads/users/'.$settings->user_photo) }}" target="_blank">
                                                 <img src="{{ asset('uploads/users/'.$settings->user_photo) }}" alt="{{$settings->user_photo}}" width="50">
@@ -84,7 +84,7 @@
                                             @error('user_photo')<div class="text-danger">{{ $message }}</div>@enderror
                                         </div>
                                         <div class="col-md-4">
-                                            <label for="user_photo_id" class="fw-semibold">UPLOAD PHOTO ID:</label>
+                                            <label for="user_photo_id" class="fw-semibold">UPLOAD PHOTO ID</label>
                                             @if(isset($settings->user_photo_id))
                                             <a href="{{ asset('uploads/users/'.$settings->user_photo_id) }}" target="_blank">
                                                 <img src="{{ asset('uploads/users/'.$settings->user_photo_id) }}" alt="{{$settings->user_photo_id}}" width="50">
@@ -94,7 +94,7 @@
                                             @error('user_photo_id')<div class="text-danger">{{ $message }}</div>@enderror
                                         </div>
                                         <div class="col-md-4">
-                                            <label for="user_address_proof" class="fw-semibold">UPLOAD ADDRESS PROOF:</label>
+                                            <label for="user_address_proof" class="fw-semibold">UPLOAD ADDRESS PROOF</label>
                                             @if(isset($settings->user_address_proof))
                                             <a href="{{ asset('uploads/users/'.$settings->user_address_proof) }}" target="_blank">
                                                 <img src="{{ asset('uploads/users/'.$settings->user_address_proof) }}" alt="{{$settings->user_address_proof}}" width="50">
@@ -107,7 +107,7 @@
                                     
                                     <div class="row mb-4 align-items-center">  
                                         <div class="col-md-4">
-                                            <label for="gender" class="fw-semibold mb-2">GENDER:</label><br>
+                                            <label for="gender" class="fw-semibold mb-2">GENDER</label><br>
                                             <div class="form-check form-check-inline">
                                                 <input class="form-check-input" type="radio" name="employee_gender" id="male" value="1" checked>
                                                 <label class="form-check-label" for="male">MALE</label>
@@ -132,24 +132,24 @@
                                     <div id="showInsurance" class="d-none mt-3">
                                         <div class="row mb-4 align-items-center">
                                             <div class="col-lg-6">
-                                                <label for="insurance_name" class="fw-semibold">INSURANCE NAME:</label>
+                                                <label for="insurance_name" class="fw-semibold">INSURANCE NAME</label>
                                                 <input type="text" name="insurance_name" placeholder="ENTER COMPANY NAME" class="form-control" id="insurance_name" value="{{ old('insurance_name') }}">
                                                 @error('insurance_name')<div class="text-danger">{{ $message }}</div>@enderror
                                             </div>  
                                             <div class="col-lg-6">
-                                                <label for="insurance_policy_copy" class="fw-semibold">INSURANCE POLICY COPY:</label>
+                                                <label for="insurance_policy_copy" class="fw-semibold">INSURANCE POLICY COPY</label>
                                                 <input type="file" name="insurance_policy_copy" class="form-control" id="insurance_policy_copy">
                                                 @error('insurance_policy_copy')<div class="text-danger">{{ $message }}</div>@enderror
                                             </div>  
                                         </div>
                                         <div class="row mb-4 align-items-center">
                                             <div class="col-lg-6">
-                                                <label for="insurance_issue_date" class="fw-semibold">ISSUE DATE:</label>
+                                                <label for="insurance_issue_date" class="fw-semibold">ISSUE DATE</label>
                                                 <input type="date" name="insurance_issue_date" placeholder="ENTER COMPANY NAME" class="form-control date" id="insurance_issue_date" value="{{ old('insurance_issue_date') }}">
                                                 @error('insurance_issue_date')<div class="text-danger">{{ $message }}</div>@enderror
                                             </div>  
                                             <div class="col-lg-6">
-                                                <label for="insurance_valid_date" class="fw-semibold">VALID DATE:</label>
+                                                <label for="insurance_valid_date" class="fw-semibold">VALID DATE</label>
                                                 <input type="date" name="insurance_valid_date" placeholder="ENTER COMPANY NAME" class="form-control date" id="insurance_valid_date" value="{{ old('insurance_valid_date') }}">
                                                 @error('insurance_valid_date')<div class="text-danger">{{ $message }}</div>@enderror
                                             </div>  
@@ -167,31 +167,31 @@
                                         <div id="showNominee" class="d-none mt-3">
                                             <div class="row mb-4 align-items-center">
                                                 <div class="col-lg-6">
-                                                    <label for="nominee_name" class="fw-semibold">NOMINEE NAME:</label>
+                                                    <label for="nominee_name" class="fw-semibold">NOMINEE NAME</label>
                                                     <input type="text" name="nominee_name" placeholder="NOMINEE NAME" class="form-control" id="nominee_name" value="{{ old('nominee_name') }}">
                                                     @error('nominee_name')<div class="text-danger">{{ $message }}</div>@enderror
                                                 </div>  
                                                 <div class="col-lg-6">
-                                                    <label for="nominee_mobile_number" class="fw-semibold">NOMINEE MOBILE NUMBER:</label>
+                                                    <label for="nominee_mobile_number" class="fw-semibold">NOMINEE MOBILE NUMBER</label>
                                                     <input type="phone" name="nominee_mobile_number" placeholder="NOMINEE MOBILE NUMBER" class="form-control" id="nominee_mobile_number" value="{{ old('nominee_mobile_number') }}">
                                                     @error('nominee_mobile_number')<div class="text-danger">{{ $message }}</div>@enderror
                                                 </div>  
                                             </div>
                                             <div class="row mb-4 align-items-center">
                                                 <div class="col-lg-6">
-                                                    <label for="nominee_photo_id" class="fw-semibold">NOMINEE PHOTO ID:</label>
+                                                    <label for="nominee_photo_id" class="fw-semibold">NOMINEE PHOTO ID</label>
                                                     <input type="file" name="nominee_photo_id" class="form-control" id="nominee_photo_id" value="{{ old('nominee_photo_id') }}">
                                                     @error('nominee_photo_id')<div class="text-danger">{{ $message }}</div>@enderror
                                                 </div>  
                                                 <div class="col-lg-6">
-                                                    <label for="nominee_address_proof" class="fw-semibold">NOMINEE ADDRESS PROOF:</label>
+                                                    <label for="nominee_address_proof" class="fw-semibold">NOMINEE ADDRESS PROOF</label>
                                                     <input type="file" name="nominee_address_proof" class="form-control" id="nominee_address_proof" value="{{ old('nominee_address_proof') }}">
                                                     @error('nominee_address_proof')<div class="text-danger">{{ $message }}</div>@enderror
                                                 </div>  
                                             </div>
                                             <div class="row mb-4 align-items-center">
                                                 <div class="col-lg-6">
-                                                    <label for="gender" class="fw-semibold mb-2">GENDER:</label><br>
+                                                    <label for="gender" class="fw-semibold mb-2">GENDER</label><br>
                                                     <div class="form-check form-check-inline">
                                                         <input class="form-check-input" type="radio" name="nominee_gender" id="nominee_male" value="1" checked>
                                                         <label class="form-check-label" for="nominee_male">MALE</label>
@@ -202,14 +202,14 @@
                                                     </div>
                                                 </div>  
                                                 <div class="col-lg-6">
-                                                    <label for="birthdate" class="fw-semibold">NOMINEE BIRTH DATE:</label>
-                                                    <input type="date" name="birthdate" class="form-control date" id="birthdate" value="{{ old('birthdate') }}">
-                                                    @error('birthdate')<div class="text-danger">{{ $message }}</div>@enderror
+                                                    <label for="nominee_birthdate" class="fw-semibold">NOMINEE BIRTH DATE</label>
+                                                    <input type="date" name="nominee_birthdate" class="form-control date" id="nominee_birthdate" value="{{ old('nominee_birthdate') }}">
+                                                    @error('nominee_birthdate')<div class="text-danger">{{ $message }}</div>@enderror
                                                 </div>  
                                             </div>
                                             <div class="row mb-4 align-items-center">
                                                 <div class="col-lg-12">
-                                                    <label for="insurance_note" class="fw-semibold">INSURANCE NOTE:</label>
+                                                    <label for="insurance_note" class="fw-semibold">INSURANCE NOTE</label>
                                                     <input type="text" name="insurance_note" placeholder="INSURANCE NOTE" class="form-control" id="insurance_note" value="{{ old('insurance_note') }}">
                                                     @error('insurance_note')<div class="text-danger">{{ $message }}</div>@enderror
                                                 </div>  
@@ -233,6 +233,14 @@
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="user_type" id="other" value="4">
                                         <label class="form-check-label" for="other">OTHER</label>
+                                    </div>
+                                    <div class="row mb-4 align-items-center">
+                                        <div class="col-lg-12 mt-3">
+                                            <label class="form-check-label" for="payment_account_id">PAYMENT ACCOUNT NAME</label>
+                                            <select name="payment_account_id" id="payment_account_id" class="form-control">
+                                                <option value="user">User</option>
+                                            </select>
+                                        </div>
                                     </div>
                                     <div class="row mb-4 align-items-center">
                                         <div class="col-lg-12 border p-3 m-2 justify-content-center">
@@ -263,6 +271,18 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="row mb-4 align-items-center">
+                                        <div class="col-lg-6 salary_par_trip d-none" id="showDriverSalary">
+                                            <label for="salary_par_trip" class="fw-semibold">SALARY PAR TRIP</label>
+                                            <input type="number" name="salary_par_trip" placeholder="SALARY PAR TRIP" class="form-control" id="salary_par_trip" value="{{ old('salary_par_trip') }}">
+                                            @error('salary_par_trip')<div class="text-danger">{{ $message }}</div>@enderror
+                                        </div>  
+                                        <div class="col-lg-6 licence d-none" id="showDriverLicence">
+                                            <label for="licence" class="fw-semibold">LICENCE</label>
+                                            <input type="file" name="licence" placeholder="LICENCE" class="form-control" id="licence">
+                                            @error('licence')<div class="text-danger">{{ $message }}</div>@enderror
+                                        </div>
+                                    </div>
                                     <div id="showUser" class="mt-3">
                                     </div>
                                     <hr class="mt-3">
@@ -278,36 +298,24 @@
                                     <div id="showBank" class="d-none mt-3">
                                         <div class="row mb-4 align-items-center">
                                             <div class="col-lg-6">
-                                                <label for="account_number" class="fw-semibold">ACCOUNT NUMBER:</label>
-                                                <input type="text" name="account_number" placeholder="ACCOUNT NUMBER" class="form-control" id="account_number" value="{{ old('account_number') }}">
-                                                @error('account_number')<div class="text-danger">{{ $message }}</div>@enderror
-                                            </div>  
-                                            <div class="col-lg-6">
-                                                <label for="ifsc_code" class="fw-semibold">IFSC CODE:</label>
-                                                <input type="text" name="ifsc_code" placeholder="IFSC CODE" class="form-control" id="ifsc_code">
-                                                @error('ifsc_code')<div class="text-danger">{{ $message }}</div>@enderror
-                                            </div>  
-                                        </div>
-                                        <div class="row mb-4 align-items-center">
-                                            <div class="col-lg-6">
-                                                <label for="account_holder_name" class="fw-semibold">ACCOUNT HOLDER NAME:</label>
+                                                <label for="account_holder_name" class="fw-semibold">ACCOUNT HOLDER NAME</label>
                                                 <input type="text" name="account_holder_name" placeholder="ACCOUNT HOLDER NAME" class="form-control" id="account_holder_name" value="{{ old('account_holder_name') }}">
                                                 @error('account_holder_name')<div class="text-danger">{{ $message }}</div>@enderror
                                             </div>  
                                             <div class="col-lg-6">
-                                                <label for="bank_branch_name" class="fw-semibold">BRANCH NAME:</label>
+                                                <label for="bank_branch_name" class="fw-semibold">BRANCH NAME</label>
                                                 <input type="text" name="bank_branch_name" placeholder="BRANCH NAME" class="form-control" id="bank_branch_name" value="{{ old('bank_branch_name') }}">
                                                 @error('bank_branch_name')<div class="text-danger">{{ $message }}</div>@enderror
                                             </div>  
                                         </div>
                                         <div class="row mb-4 align-items-center">
                                             <div class="col-lg-6">
-                                                <label for="bank_name" class="fw-semibold">BANK NAME:</label>
+                                                <label for="bank_name" class="fw-semibold">BANK NAME</label>
                                                 <input type="text" name="bank_name" placeholder="BANK NAME" class="form-control" id="bank_name" value="{{ old('bank_name') }}">
                                                 @error('bank_name')<div class="text-danger">{{ $message }}</div>@enderror
                                             </div>  
                                             <div class="col-lg-6">
-                                                <label for="bank_proof" class="fw-semibold">BANK PROOF:</label>
+                                                <label for="bank_proof" class="fw-semibold">BANK PROOF</label>
                                                 <input type="file" name="bank_proof" class="form-control" id="bank_proof" value="{{ old('bank_proof') }}">
                                                 @error('bank_proof')<div class="text-danger">{{ $message }}</div>@enderror
                                             </div>  
@@ -326,16 +334,28 @@
                                     <div id="showCourt" class="d-none mt-3">
                                         <div class="row mb-4 align-items-center">
                                             <div class="col-lg-12">
-                                                <label for="court_case" class="fw-semibold">CASE DETAILS:</label>
+                                                <label for="court_case" class="fw-semibold">CASE DETAILS</label>
                                                 <input type="text" name="court_case" placeholder="CASE DETAILS" class="form-control" id="court_case" value="{{ old('court_case') }}">
                                                 @error('court_case')<div class="text-danger">{{ $message }}</div>@enderror
+                                            </div>  
+                                        </div>
+                                        <div class="row mb-4 align-items-center">
+                                            <div class="col-lg-6">
+                                                <label for="court_case_file" class="fw-semibold">CASE DETAILS FILE</label>
+                                                <input type="file" name="court_case_file[]" class="form-control" id="court_case_file" value="{{ old('court_case_file') }}">
+                                                @error('court_case_file')<div class="text-danger">{{ $message }}</div>@enderror
+                                            </div>  
+                                            <div class="col-lg-6">
+                                                <label for="court_case_close_file" class="fw-semibold">CASE CLOSE FILE</label>
+                                                <input type="file" name="court_case_close_file" class="form-control" id="court_case_close_file" value="{{ old('court_case_close_file') }}">
+                                                @error('court_case_close_file')<div class="text-danger">{{ $message }}</div>@enderror
                                             </div>  
                                         </div>
                                     </div>
                                     <hr class="mt-3">
                                     <div class="row mb-4 align-items-center">
                                         <div class="col-lg-4">
-                                            <label for="roleInput" class="fw-semibold">Role:</label>
+                                            <label for="roleInput" class="fw-semibold">Role</label>
                                         </div>
                                         <div class="col-lg-8">
                                             <div class="input-group">
@@ -353,14 +373,11 @@
                                     <hr class="mt-3">
                                     <div class="row mb-4 align-items-center">
                                         <div class="col-lg-12">
-                                            <label for="note" class="fw-semibold">NOTE:</label>
+                                            <label for="note" class="fw-semibold">NOTE</label>
                                             <input type="text" name="note" id="note" placeholder="NOTE" class="form-control">
                                         </div>
                                     </div>
                                     <div class="row mb-4 align-items-center">
-                                        <div class="col-lg-4">
-                                            <label for="roleInput" class="fw-semibold"></label>
-                                        </div>
                                         <div class="col-lg-8">
                                             <div class="input-group">
                                                 <button type="submit" class="btn btn-primary mt-2 mb-3">
@@ -453,6 +470,29 @@
             toggleInsuranceSection();
 
             $('input[name="court"]').on('change', function(){
+                toggleInsuranceSection();
+            });
+        });        
+
+        $(document).ready(function (){
+            function toggleInsuranceSection() {
+
+                if ($('#driver').is(':checked')) {
+                    $('#showDriverSalary').removeClass('d-none').addClass('d-block');
+                } else {
+                    $('#showDriverSalary').removeClass('d-block').addClass('d-none');
+                }
+
+                if ($('#driver').is(':checked') || $('#operator').is(':checked')) {
+                    $('#showDriverLicence').removeClass('d-none').addClass('d-block');
+                } else {
+                    $('#showDriverLicence').removeClass('d-block').addClass('d-none');
+                }
+            }
+
+            toggleInsuranceSection();
+
+            $('input[name="user_type"]').on('change', function(){
                 toggleInsuranceSection();
             });
         });
