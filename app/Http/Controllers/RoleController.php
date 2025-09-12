@@ -32,23 +32,49 @@ class RoleController extends Controller
         return view('roles.create', compact('permission'));
     }
 
-    public function store(Request $request): RedirectResponse
+    // public function store(Request $request): RedirectResponse
+    // {
+    //     $this->validate($request, [
+    //         'name' => 'required|unique:roles,name',
+    //         'permission' => 'required',
+    //     ]);
+
+    //     $permissionsID = array_map(function ($value) {
+    //         return (int)$value;
+    //     }, $request->input('permission'));
+
+    //     $role = Role::create(['name' => $request->input('name')]);
+    //     $role->syncPermissions($permissionsID);
+
+    //     return redirect()->route('roles.index')
+    //         ->with('success', 'Role created successfully');
+    // }
+
+    public function store(Request $request)
     {
         $this->validate($request, [
             'name' => 'required|unique:roles,name',
-            'permission' => 'required',
         ]);
 
-        $permissionsID = array_map(function ($value) {
-            return (int)$value;
-        }, $request->input('permission'));
-
         $role = Role::create(['name' => $request->input('name')]);
-        $role->syncPermissions($permissionsID);
+
+        if ($request->has('permission')) {
+            $permissionsID = array_map('intval', $request->input('permission'));
+            $role->syncPermissions($permissionsID);
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'id' => $role->id,
+                'name' => $role->name,
+                'message' => 'Role added successfully'
+            ]);
+        }
 
         return redirect()->route('roles.index')
-            ->with('success', 'Role created successfully');
+            ->with('success', 'Role created successfully.');
     }
+
 
     public function show($id): View
     {

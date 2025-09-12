@@ -38,7 +38,7 @@
                                             <label for="challan_number" class="fw-semibold mb-2">EMPLOYEE NUMBER </label>
                                             <div class="input-group">
                                                 <div class="input-group-text">KME_</div>
-                                                <input type="text" name="id" placeholder="EMPLOYEE NUMBER" class="form-control"  id="id"  value="{{ old('id', $nextId) }}" readonly>
+                                                <input type="text" name="id" placeholder="EMPLOYEE NUMBER" class="form-control"  id="id"  value="{{ old('id', $user->id ?? $nextEmployeeNumber) }}">
                                                 @error('id')<div class="text-danger">{{ $message }}</div>@enderror
                                             </div>
                                         </div>
@@ -218,75 +218,37 @@
                                     </div>
                                     <hr class="mt-3">
                                     <h5>USER TYPE</h5>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="user_type" id="driver" value="1" checked>
-                                        <label class="form-check-label" for="driver">DRIVER</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="user_type" id="operator" value="2">
-                                        <label class="form-check-label" for="operator">OPERATOR</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="user_type" id="computer_operator" value="3">
-                                        <label class="form-check-label" for="computer_operator">COMPUTER OPERATOR</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="user_type" id="other" value="4">
-                                        <label class="form-check-label" for="other">OTHER</label>
-                                    </div>
-                                    <div class="row mb-4 align-items-center">
-                                        <div class="col-lg-12 mt-3">
-                                            <label class="form-check-label" for="payment_account_id">PAYMENT ACCOUNT NAME</label>
-                                            <select name="payment_account_id" id="payment_account_id" class="form-control">
-                                                <option value="user">User</option>
+                                    <div class="row mb-4 align-items-center justify-content-between">
+                                        <div class="col-lg-4">
+                                            <button type="button" class="btn btn-primary"
+                                                    data-bs-toggle="modal" data-bs-target="#addUserTypeModal">
+                                            Add User Type
+                                            </button>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <select name="user_type" id="user_type" class="form-select">
+                                                <option value="">Select User Type</option>
+                                                @foreach ($roles as $value => $label)
+                                                    <option value="{{ $value }}">
+                                                        {{ $label }}
+                                                    </option>
+                                                @endforeach
                                             </select>
                                         </div>
                                     </div>
                                     <div class="row mb-4 align-items-center">
-                                        <div class="col-lg-12 border p-3 m-2 justify-content-center">
-                                            <button id="addRow" type="button" class="btn btn-primary mt-2 ms-auto">+ Add Row</button>
-                                            <div id="newRow">
-                                                <div id="inputFormRow">
-                                                    <div class="input-group mb-3 gx-2 row">
-                                                        <div class="col-lg-3 mb-2">
-                                                            <label for="date_from">DATE FROM</label>
-                                                            <input type="date" name="date_from[]" class="form-control date">
-                                                        </div>
-                                                        <div class="col-lg-3 mb-2">
-                                                            <label for="date_to">DATE TO</label>
-                                                            <input type="date" name="date_to[]" class="form-control">
-                                                        </div>
-                                                        <div class="col-lg-4 mb-2">
-                                                            <label for="salary">SALARY</label>
-                                                            <input type="number" name="salary[]" class="form-control" placeholder="SALARY ( MONTHLY )">
-                                                        </div>
-                                                        <div class="col-lg-2 input-group-append">
-                                                            <label for="button">Action</label><br>
-                                                            <button type="button" class="btn btn-danger removeRow">
-                                                                <i class="fa fa-trash"></i>
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                        <div class="col-lg-6 align-items-center">
+                                            <label for="salary">SALARY</label>
+                                            <input type="number" name="salary" class="form-control" placeholder="SALARY ( MONTHLY )">
                                         </div>
-                                    </div>
-                                    <div class="row mb-4 align-items-center">
-                                        <div class="col-lg-6 salary_par_trip d-none" id="showDriverSalary">
-                                            <label for="salary_par_trip" class="fw-semibold">SALARY PAR TRIP</label>
-                                            <input type="number" name="salary_par_trip" placeholder="SALARY PAR TRIP" class="form-control" id="salary_par_trip" value="{{ old('salary_par_trip') }}">
-                                            @error('salary_par_trip')<div class="text-danger">{{ $message }}</div>@enderror
-                                        </div>  
                                         <div class="col-lg-6 licence d-none" id="showDriverLicence">
                                             <label for="licence" class="fw-semibold">LICENCE</label>
                                             <input type="file" name="licence" placeholder="LICENCE" class="form-control" id="licence">
                                             @error('licence')<div class="text-danger">{{ $message }}</div>@enderror
                                         </div>
                                     </div>
-                                    <div id="showUser" class="mt-3">
-                                    </div>
                                     <hr class="mt-3">
-                                    <h5>BANK ACOOUNT</h5>
+                                    <h5>BANK ACCOUNT</h5>
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="bank" id="bank_no" value="1" checked>
                                         <label class="form-check-label" for="bank_no">NO</label>
@@ -297,23 +259,6 @@
                                     </div>
                                     <div id="showBank" class="d-none mt-3">
                                         <div class="row mb-4 align-items-center">
-                                            <div class="col-lg-6">
-                                                <label for="account_holder_name" class="fw-semibold">ACCOUNT HOLDER NAME</label>
-                                                <input type="text" name="account_holder_name" placeholder="ACCOUNT HOLDER NAME" class="form-control" id="account_holder_name" value="{{ old('account_holder_name') }}">
-                                                @error('account_holder_name')<div class="text-danger">{{ $message }}</div>@enderror
-                                            </div>  
-                                            <div class="col-lg-6">
-                                                <label for="bank_branch_name" class="fw-semibold">BRANCH NAME</label>
-                                                <input type="text" name="bank_branch_name" placeholder="BRANCH NAME" class="form-control" id="bank_branch_name" value="{{ old('bank_branch_name') }}">
-                                                @error('bank_branch_name')<div class="text-danger">{{ $message }}</div>@enderror
-                                            </div>  
-                                        </div>
-                                        <div class="row mb-4 align-items-center">
-                                            <div class="col-lg-6">
-                                                <label for="bank_name" class="fw-semibold">BANK NAME</label>
-                                                <input type="text" name="bank_name" placeholder="BANK NAME" class="form-control" id="bank_name" value="{{ old('bank_name') }}">
-                                                @error('bank_name')<div class="text-danger">{{ $message }}</div>@enderror
-                                            </div>  
                                             <div class="col-lg-6">
                                                 <label for="bank_proof" class="fw-semibold">BANK PROOF</label>
                                                 <input type="file" name="bank_proof" class="form-control" id="bank_proof" value="{{ old('bank_proof') }}">
@@ -332,43 +277,19 @@
                                         <label class="form-check-label" for="court_yes">YES</label>
                                     </div>
                                     <div id="showCourt" class="d-none mt-3">
-                                        <div class="row mb-4 align-items-center">
-                                            <div class="col-lg-12">
-                                                <label for="court_case" class="fw-semibold">CASE DETAILS</label>
-                                                <input type="text" name="court_case" placeholder="CASE DETAILS" class="form-control" id="court_case" value="{{ old('court_case') }}">
-                                                @error('court_case')<div class="text-danger">{{ $message }}</div>@enderror
-                                            </div>  
-                                        </div>
-                                        <div class="row mb-4 align-items-center">
-                                            <div class="col-lg-6">
-                                                <label for="court_case_file" class="fw-semibold">CASE DETAILS FILE</label>
-                                                <input type="file" name="court_case_file[]" class="form-control" id="court_case_file" value="{{ old('court_case_file') }}">
-                                                @error('court_case_file')<div class="text-danger">{{ $message }}</div>@enderror
-                                            </div>  
-                                            <div class="col-lg-6">
-                                                <label for="court_case_close_file" class="fw-semibold">CASE CLOSE FILE</label>
-                                                <input type="file" name="court_case_close_file" class="form-control" id="court_case_close_file" value="{{ old('court_case_close_file') }}">
-                                                @error('court_case_close_file')<div class="text-danger">{{ $message }}</div>@enderror
-                                            </div>  
-                                        </div>
-                                    </div>
-                                    <hr class="mt-3">
-                                    <div class="row mb-4 align-items-center">
-                                        <div class="col-lg-4">
-                                            <label for="roleInput" class="fw-semibold">Role</label>
-                                        </div>
-                                        <div class="col-lg-8">
-                                            <div class="input-group">
-                                                <div class="input-group-text"><i class="feather-user"></i></div>
-                                                <select name="roles[]" class="form-select" multiple="multiple" id="roleInput">
-                                                    @foreach ($roles as $value => $label)
-                                                        <option value="{{ $value }}">
-                                                            {{ $label }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
+                                        <div id="case-files-wrapper">
+                                            <div class="row mb-4 align-items-center">
+                                                <div class="col-lg-5">
+                                                    <label for="court_case_file" class="fw-semibold">CASE DETAILS FILE</label>
+                                                    <input type="file" name="court_case_file[]" class="form-control">
+                                                </div>  
+                                                <div class="col-lg-5">
+                                                    <label for="court_case_close_file" class="fw-semibold">CASE CLOSE FILE</label>
+                                                    <input type="file" name="court_case_close_file[]" class="form-control">
+                                                </div>  
                                             </div>
                                         </div>
+                                        <button type="button" class="btn btn-primary mt-3" id="add-fields">Add More Files</button>
                                     </div>
                                     <hr class="mt-3">
                                     <div class="row mb-4 align-items-center">
@@ -396,126 +317,162 @@
             <!-- [ Main Content ] end -->
         </div>
     </main>
-    
+<div class="modal fade" id="addUserTypeModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="addUserTypeForm" action="{{ route('roles.store') }}" method="POST">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title">Add User Type</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                    <label for="user_type_name" class="col-form-label">User Type Name:</label>
+                    <input type="text" class="form-control" name="name" id="user_type_name" placeholder="Enter user type">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
 @endsection
 
 @push('scripts')
-    <script>              
+    <script>
         $(document).ready(function () {
-            const now = new Date();
-            const today = now.toISOString().split('T')[0];
 
-            document.querySelectorAll('.date').forEach(input => {
-                input.value = today;
+            // -------------------- Set today's date for all date fields --------------------
+            const today = new Date().toISOString().split('T')[0];
+            $('.date').each(function () {
+                if (!$(this).val()) { // Only set if empty
+                    $(this).val(today);
+                }
             });
-        });
 
-        $(document).ready(function (){
-            function toggleInsuranceSection() {
-                if ($('#insurance_yes').is(':checked')) {
-                    $('#showInsurance').removeClass('d-none').addClass('d-block border border-2 shadow-md rounded p-3');
+            // -------------------- Toggle Sections --------------------
+            function toggleSection(triggerId, sectionId, extraClasses = 'border border-2 shadow-md rounded p-3') {
+                if ($(triggerId).is(':checked')) {
+                    $(sectionId).removeClass('d-none').addClass('d-block ' + extraClasses);
                 } else {
-                    $('#showInsurance').removeClass('d-block').addClass('d-none');
+                    $(sectionId).removeClass('d-block').addClass('d-none');
                 }
             }
 
-            toggleInsuranceSection();
-
-            $('input[name="insurance"]').on('change', function(){
-                toggleInsuranceSection();
+            // Insurance
+            $('input[name="insurance"]').on('change', function () {
+                toggleSection('#insurance_yes', '#showInsurance');
             });
-        });
+            toggleSection('#insurance_yes', '#showInsurance');
 
-        $(document).ready(function (){
-            function toggleInsuranceSection() {
-                if ($('#nominee_yes').is(':checked')) {
-                    $('#showNominee').removeClass('d-none').addClass('d-block border border-2 shadow-md rounded p-3');
-                } else {
-                    $('#showNominee').removeClass('d-block').addClass('d-none');
-                }
-            }
-
-            toggleInsuranceSection();
-
-            $('input[name="nominee"]').on('change', function(){
-                toggleInsuranceSection();
+            // Nominee
+            $('input[name="nominee"]').on('change', function () {
+                toggleSection('#nominee_yes', '#showNominee');
             });
-        });
+            toggleSection('#nominee_yes', '#showNominee');
 
-        $(document).ready(function (){
-            function toggleInsuranceSection() {
-                if ($('#bank_yes').is(':checked')) {
-                    $('#showBank').removeClass('d-none').addClass('d-block border border-2 rounded shadow-md p-3');
-                } else {
-                    $('#showBank').removeClass('d-block').addClass('d-none');
-                }
-            }
-
-            toggleInsuranceSection();
-
-            $('input[name="bank"]').on('change', function(){
-                toggleInsuranceSection();
+            // Bank
+            $('input[name="bank"]').on('change', function () {
+                toggleSection('#bank_yes', '#showBank');
             });
-        });
+            toggleSection('#bank_yes', '#showBank');
 
-        $(document).ready(function (){
-            function toggleInsuranceSection() {
-                if ($('#court_yes').is(':checked')) {
-                    $('#showCourt').removeClass('d-none').addClass('d-block border border-2 rounded shadow-md p-3');
-                } else {
-                    $('#showCourt').removeClass('d-block').addClass('d-none');
-                }
-            }
-
-            toggleInsuranceSection();
-
-            $('input[name="court"]').on('change', function(){
-                toggleInsuranceSection();
+            // Court
+            $('input[name="court"]').on('change', function () {
+                toggleSection('#court_yes', '#showCourt');
             });
-        });        
+            toggleSection('#court_yes', '#showCourt');
 
-        $(document).ready(function (){
-            function toggleInsuranceSection() {
+            // -------------------- Driver Licence based on User Type --------------------
 
-                if ($('#driver').is(':checked')) {
-                    $('#showDriverSalary').removeClass('d-none').addClass('d-block');
-                } else {
-                    $('#showDriverSalary').removeClass('d-block').addClass('d-none');
-                }
-
-                if ($('#driver').is(':checked') || $('#operator').is(':checked')) {
+            const roleMap = @json($roles);
+            function toggleDriverLicence() {
+                const val = $('#user_type').val();
+                let label = roleMap[val] || '';
+                label = String(label).trim().toLowerCase();
+                if (label === 'driver' || label === 'operator') {
                     $('#showDriverLicence').removeClass('d-none').addClass('d-block');
                 } else {
                     $('#showDriverLicence').removeClass('d-block').addClass('d-none');
                 }
             }
+            $('#user_type').on('change', toggleDriverLicence);
+            toggleDriverLicence();
 
-            toggleInsuranceSection();
+            // -------------------- Add/Remove Court Case Fields --------------------
 
-            $('input[name="user_type"]').on('change', function(){
-                toggleInsuranceSection();
+            $('#add-fields').click(function () {
+                const newFields = `
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-lg-5">
+                            <input type="file" name="court_case_file[]" class="form-control">
+                        </div>
+                        <div class="col-lg-5">
+                            <input type="file" name="court_case_close_file[]" class="form-control">
+                        </div>
+                        <div class="col-lg-2 text-end mt-2">
+                            <button type="button" class="btn btn-danger btn-sm remove-fields"><i class="fa fa-trash"></i></button>
+                        </div>
+                    </div>`;
+                $('#case-files-wrapper').append(newFields);
             });
+
+            $(document).on('click', '.remove-fields', function () {
+                $(this).closest('.row').remove();
+            });
+
         });
 
-        $(document).ready(function () {
-            $("#addRow").click(function () {
-                var html = '';
-                html += '<div id="inputFormRow">';
-                html += '<div class="input-group mb-3 gx-2 row">';
-                html += '<hr class="mt-0">';
-                html += '<div class="col-lg-3 mb-2"><label>DATE FROM</label><input type="date" name="date_from[]" class="form-control"></div>';
-                html += '<div class="col-lg-3 mb-2"><label>DATE TO</label><input type="date" name="date_to[]" class="form-control"></div>';
-                html += '<div class="col-lg-4 mb-2"><label>SALARY</label><input type="number" name="salary[]" class="form-control" placeholder="SALARY ( MONTHLY )"></div>';
-                html += '<div class="col-lg-2 input-group-append"><label>Action</label><br><button type="button" class="btn btn-danger removeRow"><i class="fa fa-trash"></i></button></div>';
-                html += '</div></div>';
+        $(document).ready(function() {
+            $(document).on('submit', '#addUserTypeForm', function(e) {
+                e.preventDefault();
 
-                $('#newRow').append(html);
+                const form = $(this);
+                const url = form.attr('action');
+                const formData = new FormData(this);
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if(response.id && response.name){
+                            $('#user_type').append(`<option value="${response.id}" selected>${response.name}</option>`);
+                            $('#user_type').val(response.id);
+
+                            const modalEl = document.getElementById('addUserTypeModal');
+                            const modal = bootstrap.Modal.getInstance(modalEl);
+                            if(modal){
+                                modal.hide();
+                            }
+
+                            form[0].reset();
+
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                        }
+                    },
+                    error: function(xhr){
+                        alert('Something went wrong!');
+                    }
+                });
+                $('#addUserTypeModal').on('hidden.bs.modal', function () {
+                    $('body').removeClass('modal-open');
+                    $('body').css('overflow', 'auto');
+                    $('.modal-backdrop').remove();
+                });
             });
 
-            // Remove row
-            $(document).on('click', '.removeRow', function () {
-                $(this).closest('#inputFormRow').remove();
-            });
         });
 
     </script>
