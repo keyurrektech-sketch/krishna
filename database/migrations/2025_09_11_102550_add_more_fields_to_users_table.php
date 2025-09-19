@@ -32,7 +32,7 @@ return new class extends Migration
             $table->date('insurance_valid_date')->nullable();
 
             // Nominee
-            $table->tinyInteger('nominee')->default(1); //1=no,2=yes
+            $table->tinyInteger('nominee')->nullable();
             $table->string('nominee_name')->nullable();
             $table->string('nominee_mobile_number')->nullable();
             $table->string('nominee_photo_id')->nullable();
@@ -43,10 +43,10 @@ return new class extends Migration
 
             // User type
             $table->tinyInteger('user_type')->default(1); //1=driver,2=operator,3=computer operator,4=other
-            $table->unsignedBigInteger('payment_account_id')->nullable();
+            $table->string('department')->nullable();
 
             // Salary
-            $table->decimal('salary_par_trip', 10, 2)->nullable();
+            $table->decimal('salary', 10, 2)->nullable();
             $table->string('licence')->nullable();
 
             // Bank

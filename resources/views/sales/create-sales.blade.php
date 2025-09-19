@@ -2,10 +2,10 @@
 
     @section('content')
 
-        <main class="nxl-container">
-            <div class="nxl-content">
+        <div class="wrapper">
+            <div class="page-wrapper">
                 <!-- [ Main Content ] start -->
-                <div class="main-content">
+                <div class="page-content">
                     <div class="row">
                         <div class="col-lg-12">
                             @if (count($errors) > 0)
@@ -101,7 +101,7 @@
                 </div>
                 <!-- [ Main Content ] end -->
             </div>
-        </main>
+        </div>
         <div class="modal fade" id="shortcutModal" tabindex="-1" aria-labelledby="shortcutModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">

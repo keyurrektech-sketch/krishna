@@ -2,56 +2,57 @@
 
 @section('content')
 
-<div class="nxl-container">
-    <div class="nxl-content">   
-        <div class="main-content">
-            <div class="row">
-                <div class="row mb-3">
-                    <!-- [Leads] start -->
-                    <div class="col-xxl-8">
-                        @session('success')
-                            <div class="alert alert-success" role="alert"> 
-                                {{ $value }}
-                            </div>
-                        @endsession
-                        <div class="card stretch stretch-full">
-                            <div class="card-header">
-                                <h5 class="card-title">Add Sales</h5>
-                                <div class="card-header-action">                      
-                                    @can('role-create')
-                                        <a class="btn btn-success btn-sm" href="{{ route('sales.create') }}">
-                                            <i class="fa fa-plus"></i> Add New
-                                        </a>
-                                    @endcan
+    <div class="wrapper">
+        <div class="page-wrapper">   
+            <div class="page-content">
+                <div class="row">
+                    <div class="row mb-3">
+                        <!-- [Leads] start -->
+                        <div class="col-xxl-12">
+                            @session('success')
+                                <div class="alert alert-success" role="alert"> 
+                                    {{ $value }}
+                                </div>
+                            @endsession
+                            <div class="card stretch stretch-full">
+                                <div class="card-header">
+                                    <h5 class="card-title">Add Sales</h5>
+                                    <div class="card-header-action">                      
+                                        @can('role-create')
+                                            <a class="btn btn-success btn-sm" href="{{ route('sales.create') }}">
+                                                <i class="fa fa-plus"></i> Add New
+                                            </a>
+                                        @endcan
+                                    </div>
+                                </div>
+                                <div class="card-body custom-card-action p-0">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover mb-0">
+                                            <thead>
+                                                <tr class="border-b">
+                                                    <th>No</th>
+                                                    <th>Name</th>
+                                                    <th>Emails</th>
+                                                    <th>Roles</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="card-body custom-card-action p-0">
-                                <div class="table-responsive">
-                                    <table class="table table-hover mb-0">
-                                        <thead>
-                                            <tr class="border-b">
-                                                <th>No</th>
-                                                <th>Name</th>
-                                                <th>Emails</th>
-                                                <th>Roles</th>
-                                                <th>Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        </tbody>
-                                    </table>
+                            <div class="card-footer">
+                                <div class="d-flex justify-content-start">
                                 </div>
                             </div>
                         </div>
-                        <div class="card-footer">
-                            <div class="d-flex justify-content-start">
-                            </div>
-                        </div>
+                        <!-- [Leads] end -->
                     </div>
-                    <!-- [Leads] end -->
                 </div>
             </div>
         </div>
     </div>
-</div>
+    
 @endsection

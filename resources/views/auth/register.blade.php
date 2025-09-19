@@ -2,76 +2,102 @@
 
 
 @section('content')
-<main class="auth-minimal-wrapper">
-        <div class="auth-minimal-inner">
-            <div class="minimal-card-wrapper">
-                <div class="card mb-4 mt-5 mx-4 mx-sm-0 position-relative">
-                    <div class="wd-50 bg-white p-2 rounded-circle shadow-lg position-absolute translate-middle top-0 start-50">
-                        <img src="{{ $settings && $settings->logo ? asset('uploads/'.$settings->logo) : asset('uploads/user.png')}}" alt="" class="img-fluid">
-                    </div>
-                    <div class="card-body p-sm-5">
-                        <h2 class="fs-20 fw-bolder mb-4">Register</h2>
-                        <h4 class="fs-13 fw-bold mb-2">Manage all your Duralux crm</h4>
-                        <p class="fs-12 fw-medium text-muted">Let's get you all setup, so you can verify your personal account and begine setting up your profile.</p>
-                        <form method="POST" class="w-100 mt-4 pt-2" action="{{ route('register') }}">
-                        @csrf
-                            <div class="mb-4">
-                                <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" autofocus placeholder="User Name">
-                                @error('name')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                            <div class="mb-4">
-                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email"  placeholder="Email">
-                                @error('email')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                            <div class="mb-4 generate-pass">
-                                <div class="input-group field">
-                                    <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password"  placeholder="New Password">
-                                    @error('password')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                    <div class="input-group-text border-start bg-gray-2 c-pointer show-pass" data-bs-toggle="tooltip" title="Show/Hide Password"><i></i></div>
-                                </div>
-                                <div class="progress-bar mt-2">
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                </div>
-                            </div>
-                            <div class="mb-4">
-                            <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password" placeholder="Confirm Password">
-                            </div>
-                            <div class="mt-4">
-                                <div class="custom-control custom-checkbox mb-2">
-                                    <input type="checkbox" class="custom-control-input" id="receiveMial" required>
-                                    <label class="custom-control-label c-pointer text-muted" for="receiveMial" style="font-weight: 400 !important">Yes, I wnat to receive Duralux community emails</label>
-                                </div>
-                                <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="termsCondition" required>
-                                    <label class="custom-control-label c-pointer text-muted" for="termsCondition" style="font-weight: 400 !important">I agree to all the <a href="">Terms &amp; Conditions</a> and <a href="">Fees</a>.</label>
-                                </div>
-                            </div>
-                            <div class="mt-5">
-                                <button type="submit" class="btn btn-lg btn-primary w-100">Create Account</button>
-                            </div>
-                        </form>
-                        <div class="mt-5 text-muted">
-                            <span>Already have an account?</span>
-                            <a href="{{ route('login') }}" class="fw-bold">Login</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
+
+	<div class="wrapper">
+		<div class="d-flex align-items-center justify-content-center my-5">
+			<div class="container-fluid">
+				<div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3">
+					<div class="col mx-auto">
+						<div class="card mb-0">
+							<div class="card-body">
+								<div class="p-4">
+									<div class="mb-3 text-center">
+										<img src="{{ $settings && $settings->logo ? asset('uploads/'.$settings->logo) : asset('uploads/user.png')}}" width="60" alt="" />
+									</div>
+									<div class="text-center mb-4">
+										<h5 class="">Rocker Admin</h5>
+										<p class="mb-0">Please fill the below details to create your account</p>
+									</div>
+									<div class="form-body">
+										<form class="row g-3" action="" method="POST">
+                                            @csrf
+											<div class="col-12">
+                                                <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" autofocus placeholder="User Name">
+                                                @error('name')
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <strong>{{ $message }}</strong>
+                                                    </span>
+                                                @enderror
+											</div>
+											<div class="col-12">
+                                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email"  placeholder="Email">
+                                                @error('email')
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <strong>{{ $message }}</strong>
+                                                    </span>
+                                                @enderror
+											</div>
+											<div class="col-12">
+												<div class="input-group" id="show_hide_password">
+                                                    <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password"  placeholder="New Password"> <a href="javascript:;" class="input-group-text bg-transparent"><i class='bx bx-hide'></i></a>
+                                                    @error('password')
+                                                        <span class="invalid-feedback" role="alert">
+                                                            <strong>{{ $message }}</strong>
+                                                        </span>
+                                                    @enderror
+												</div>
+											</div>
+                                            <div class="col-12">
+                                                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password" placeholder="Confirm Password">
+                                            </div>
+											<div class="col-12">
+												<div class="d-grid">
+													<button type="submit" class="btn btn-primary">Sign up</button>
+												</div>
+											</div>
+											<div class="col-12">
+												<div class="text-center ">
+													<p class="mb-0">Already have an account? <a href="auth-basic-signin.html">Sign in here</a></p>
+												</div>
+											</div>
+										</form>
+									</div>
+									<div class="login-separater text-center mb-5"> <span>OR SIGN UP WITH EMAIL</span>
+										<hr/>
+									</div>
+									<div class="list-inline contacts-social text-center">
+										<a href="javascript:;" class="list-inline-item bg-facebook text-white border-0 rounded-3"><i class="bx bxl-facebook"></i></a>
+										<a href="javascript:;" class="list-inline-item bg-twitter text-white border-0 rounded-3"><i class="bx bxl-twitter"></i></a>
+										<a href="javascript:;" class="list-inline-item bg-google text-white border-0 rounded-3"><i class="bx bxl-google"></i></a>
+										<a href="javascript:;" class="list-inline-item bg-linkedin text-white border-0 rounded-3"><i class="bx bxl-linkedin"></i></a>
+									</div>
+
+								</div>
+							</div>
+						</div>
+					</div>
+				 </div>
+				<!--end row-->
+			</div>
+		</div>
+	</div>
+
 @endsection
+@push('script')
+	<script>
+		$(document).ready(function () {
+			$("#show_hide_password a").on('click', function (event) {
+				event.preventDefault();
+				if ($('#show_hide_password input').attr("type") == "text") {
+					$('#show_hide_password input').attr('type', 'password');
+					$('#show_hide_password i').addClass("bx-hide");
+					$('#show_hide_password i').removeClass("bx-show");
+				} else if ($('#show_hide_password input').attr("type") == "password") {
+					$('#show_hide_password input').attr('type', 'text');
+					$('#show_hide_password i').removeClass("bx-hide");
+					$('#show_hide_password i').addClass("bx-show");
+				}
+			});
+		});
+	</script>
+@endpush

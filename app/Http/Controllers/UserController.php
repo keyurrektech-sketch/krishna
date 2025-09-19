@@ -11,6 +11,10 @@ use Illuminate\Support\Arr;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Spatie\Permission\Models\Permission;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -21,89 +25,76 @@ class UserController extends Controller
             ->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
+
+    public function editIndex(Request $request)
+    {
+        $data = User::latest()->paginate(5);
+
+        return view('users.edit-index', compact('data'))
+            ->with('i', ($request->input('page', 1) - 1) * 5);
+    }
+
+
     public function create(): View
     {
         $roles = Role::pluck('name', 'id')->all();
+        $permissions = Permission::all(); // Get all permissions for user-specific assignment
+
+        $groupedPermissions = $permissions->groupBy(function ($item) {
+            $parts = explode('-', $item->name);
+            $group = Str::plural(end($parts));
+            return ucfirst($group);
+        });
 
         $lastUser = User::latest('id')->first();
         $nextEmployeeNumber = $lastUser ? $lastUser->id + 1 : 1;
 
-        return view('users.create', compact('roles', 'nextEmployeeNumber'));
+        return view('users.create', compact('roles', 'permissions', 'groupedPermissions', 'nextEmployeeNumber'));
     }
 
-    // public function store(Request $request): RedirectResponse
-    // {
-    //     $this->validate($request, [
-    //         'name' => 'required',
-    //         'username' => 'required|string|max:50|unique:users,username',
-    //         'email' => 'required|email|unique:users,email',
-    //         'contact_number' => 'nullable|string|max:20|regex:/^(?:\+91[-\s]?)?[6-9]\d{9}$/',
-    //         'user_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-    //         'birthdate' => 'nullable|date|before:today',
-    //         'password' => 'required|same:confirm-password',
-    //         'roles' => 'required'
-    //     ]);
-
-    //     $input = $request->all();
-    //     $input['password'] = Hash::make($input['password']);
-
-    //     if ($request->hasFile('user_photo'))
-    //     {
-    //         $image = $request->file('user_photo');
-    //         $image_name = uniqid().".".$image->getClientOriginalExtension();
-    //         $destination_path = public_path('uploads/users');
-    //         if (!file_exists($destination_path))
-    //         {
-    //             mkdir($destination_path, 0755, true);
-    //         }
-    //         if (file_exists($destination_path))
-    //         {
-    //             $image->move($destination_path, $image_name);
-    //         }
-    //     }
-    //     $input['user_photo'] = $image_name;
-
-    //     $user = User::create($input);
-    //     $user->assignRole($request->input('roles'));
-
-
-    //     return redirect()->route('users.index')
-    //         ->with('success', 'User created successfully');
-    // }
     public function store(Request $request)
     {
         // -------------------- Validation --------------------
         $request->validate([
             // Basic info
             'username' => 'required|string|max:255',
-            'birthdate' => 'required|date',
-            'contact_number_1' => 'nullable|string|max:15',
-            'contact_number_2' => 'nullable|string|max:15',
+            'birthdate' => [
+                'required',
+                'date',
+                'before_or_equal:' . now()->subYears(18)->format('Y-m-d'),
+            ],
+            'contact_number_1' => 'required|string|max:10|min:10|regex:/^[0-9+\-\s]+$/',
+            'contact_number_2' => 'nullable|string|max:10|min:10|regex:/^[0-9+\-\s]+$/',
             'joining_date' => 'required|date',
-            'user_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'user_photo_id' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'user_address_proof' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'user_photo' => 'required|image|mimes:jpeg,png,jpg,pdf|max:2048',
+            'user_photo_id' => 'required|image|mimes:jpeg,png,jpg,pdf|max:2048',
+            'user_address_proof' => 'required|image|mimes:jpeg,png,jpg,pdf|max:2048',
             'employee_gender' => 'required|in:1,2',
 
             // ============ INSURANCE ============
             'insurance' => 'nullable|in:1,2',
             'insurance_name' => 'required_if:insurance,2|nullable|string|max:255',
-            'insurance_policy_copy' => 'required_if:insurance,2|file|mimes:pdf,jpg,png',
+            'insurance_policy_copy' => 'required_if:insurance,2|file|mimes:pdf,jpg,png,jpeg',
             'insurance_issue_date' => 'required_if:insurance,2|nullable|date',
             'insurance_valid_date' => 'required_if:insurance,2|nullable|date',
 
             // ============ NOMINEE ============
-            'nominee' => 'nullable|in:1,2',
-            'nominee_name' => 'required_if:nominee,2|nullable|string|max:255',
-            'nominee_mobile_number' => 'required_if:nominee,2|nullable|string|max:15',
-            'nominee_photo_id' => 'required_if:nominee,2|nullable|file|mimes:jpg,png,jpeg',
-            'nominee_address_proof' => 'required_if:nominee,2|nullable|file|mimes:jpg,png,jpeg',
-            'nominee_gender' => 'required_if:nominee,2|nullable|in:1,2',
-            'nominee_birthdate' => 'required_if:nominee,2|nullable|date',
+            'nominee_name' => 'required_if:insurance,2|nullable|string|max:255',
+            'nominee_mobile_number' => 'required_if:insurance,2|nullable|string|max:10|min:10|regex:/^[0-9+\-\s]+$/',
+            'nominee_photo_id' => 'required_if:insurance,2|nullable|file|mimes:jpg,png,jpeg,pdf',
+            'nominee_address_proof' => 'required_if:insurance,2|nullable|file|mimes:jpg,png,jpeg,pdf',
+            'nominee_gender' => 'required_if:insurance,2|nullable|in:1,2',
+            'nominee_birthdate' => [
+                'required_if:insurance,2',
+                'nullable',
+                'date',
+                'before_or_equal:' . now()->subYears(18)->format('Y-m-d'),
+            ],
 
             // ============ USER TYPE / SALARY ============
             'user_type' => 'required|exists:roles,id',
-            'salary' => 'nullable|numeric',
+            'department' => 'required|string|max:255',
+            'salary' => 'required|numeric',
             'licence' => 'nullable|file|mimes:pdf,jpg,png,jpeg',
 
             // ============ BANK ============
@@ -112,32 +103,100 @@ class UserController extends Controller
 
             // ============ COURT ============
             'court' => 'required|in:1,2',
-            'court_case_file.*' => 'required_if:court,2|file|mimes:pdf,jpg,png,jpeg',
-            'court_case_close_file.*' => 'nullable|file|mimes:pdf,jpg,png,jpeg', // if needed make this also required_if
+
+            // Parent array rule
+            'court_case_files' => 'required_if:court,2|array',
+
+            // Each file rule
+            'court_case_files.*' => 'file|mimes:pdf,jpg,png,jpeg',
+
+            'court_case_close_file.*' => 'nullable|file|mimes:pdf,jpg,png,jpeg',
 
             // ============ NOTE ============
             'note' => 'nullable|string|max:1000',
+            
+            // Permissions (user-specific)
+            'permissions' => 'nullable|array',
+            'permissions.*' => 'exists:permissions,id',
+            
+            // Email validation
+            'email' => 'nullable|email|unique:users,email',
+        ],[
+            'username.required' => 'Employee name is required.',
+            'birthdate.required' => 'Please provide a valid birthdate.',
+            'contact_number_1.required' => 'Primary contact number is required.',
+            'contact_number_1.regex' => 'Contact number format is invalid.',
+            'contact_number_2.regex' => 'Alternate contact number format is invalid.',
+            'user_photo.required' => 'Employee image is required.',
+            'user_photo.image' => 'Employee image must be an image file.',
+            'user_photo_id.required' => 'Employee photo ID is required.',
+            'user_address_proof.required' => 'Employee Address proof is required.',
+            'insurance_name.required_if' => 'Insurance name is required when insurance is selected.',
+            'insurance_policy_copy.required_if' => 'Upload insurance policy copy if insurance is selected.',
+            'insurance_policy_copy.mimes' => 'Insurance policy copy must be a file of type: pdf, jpg, png.',
+            'nominee_name.required_if' => 'Nominee name is required if insurance is selected.',
+            'nominee_mobile_number.required_if' => 'Nominee mobile number is required.',
+            'nominee_mobile_number.regex' => 'Nominee mobile number format is invalid.',
+            'nominee_photo_id.required_if' => 'Nominee photo ID is required.',
+            'nominee_address_proof.required_if' => 'Nominee address proof is required.',
+            'nominee_gender.required_if' => 'Nominee gender is required.',
+            'nominee_birthdate.required_if' => 'Nominee birthdate is required.',
+            'user_type.required' => 'Please select a employee designation.',
+            'user_type.exists' => 'Selected employee designation is invalid.',
+            'department.required' => 'Department is required.',
+            'salary.required' => 'Salary is required.',
+            'salary.numeric' => 'Salary must be a valid number.',
+            'licence.mimes' => 'License must be a file of type: pdf, jpg, png, jpeg.',
+            'bank_proof.required_if' => 'Bank proof is required when bank option is selected.',
+            'bank_proof.mimes' => 'Bank proof must be a file of type: pdf, jpg, png, jpeg.',
+            'court_case_files.required_if' => 'Court case files are required when court is selected.',
+            'court_case_files.*.mimes' => 'Each court file must be a valid file (pdf, jpg, png, jpeg).',
+            'court_case_close_file.*.mimes' => 'Each court close file must be a valid file (pdf, jpg, png, jpeg).',
+            'note.max' => 'Note cannot exceed 1000 characters.',
+            'permissions.*.exists' => 'One or more selected permissions are invalid.',
+            'email.unique' => 'This email address is already in use. Please provide a different email address.',
         ]);
 
         // -------------------- Prepare User Data --------------------
         $data = $request->except([
             'user_photo', 'user_photo_id', 'user_address_proof', 'insurance_policy_copy',
             'nominee_photo_id', 'nominee_address_proof', 'licence', 'bank_proof',
-            'court_case_file', 'court_case_close_file'
+            'court_case_files', 'court_case_close_file'
         ]);
 
         $data['name'] = $request->input('username');
 
         if (empty($data['email'])) {
-            $data['email'] = strtolower($request->username) . '@gmail.com';
+            $baseEmail = trim(str_replace(' ', '', strtolower($request->username))) . '@krishnaminerals.com';
+            $email = $baseEmail;
+            $counter = 1;
+            
+            // Check if email already exists and generate a unique one
+            while (User::where('email', $email)->exists()) {
+                $email = trim(str_replace(' ', '', strtolower($request->username))) . $counter . '@krishnaminerals.com';
+                $counter++;
+            }
+            
+            $data['email'] = $email;
         }
 
         if (empty($data['password'])) {
-            $data['password'] = \Illuminate\Support\Facades\Hash::make(\Str::random(10));
+            $plainPassword = \Str::random(10);
+            $data['password'] = \Hash::make($plainPassword);
         }
 
         // -------------------- Create User --------------------
         $user = \App\Models\User::create($data);
+
+        // NOTE: We're not automatically assigning the role anymore to ensure
+        // permissions are based purely on user ID, not role inheritance
+        
+        // Assign direct permissions to user (bypassing roles)
+        if ($request->has('permissions')) {
+            $permissionIds = $request->input('permissions');
+            $permissions = Permission::whereIn('id', $permissionIds)->get();
+            $user->syncPermissions($permissions); // This replaces all existing permissions for the user
+        }
 
         // -------------------- Prepare User Folder Structure --------------------
         $userFolder = 'uploads/users/user_' . $user->id;
@@ -172,48 +231,65 @@ class UserController extends Controller
             'bank_proof' => 'bank',
         ];
 
+        $filePathsToUpdate = [];
+
         foreach ($fileMap as $file => $subFolder) {
             if ($request->hasFile($file)) {
-                $filename = time() . '_' . $request->file($file)->getClientOriginalName();
+                $filename = time() . '_' . uniqid() . '_' . $request->file($file)->getClientOriginalName();
                 $path = $subFolder ? "$userFolder/$subFolder" : $userFolder;
                 $request->file($file)->move(public_path($path), $filename);
-                $data[$file] = "$path/$filename";
+                $filePathsToUpdate[$file] = "$path/$filename";
             }
         }
 
         // Handle multiple court case files
         $courtFiles = [];
-        if ($request->hasFile('court_case_file')) {
-            foreach ($request->file('court_case_file') as $file) {
-                $filename = time() . '_' . $file->getClientOriginalName();
+        if ($request->hasFile('court_case_files')) {
+            foreach ($request->file('court_case_files') as $file) {
+                $filename = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
                 $file->move(public_path("$userFolder/court_case"), $filename);
                 $courtFiles[] = "$userFolder/court_case/$filename";
             }
         }
-        $data['court_case_file'] = json_encode($courtFiles);
 
+        // Handle court case close files
         $courtCloseFiles = [];
         if ($request->hasFile('court_case_close_file')) {
             foreach ($request->file('court_case_close_file') as $file) {
-                $filename = time() . '_' . $file->getClientOriginalName();
+                $filename = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
                 $file->move(public_path("$userFolder/court_case_close"), $filename);
                 $courtCloseFiles[] = "$userFolder/court_case_close/$filename";
             }
         }
-        $data['court_case_close_file'] = json_encode($courtCloseFiles);
 
         // -------------------- Update User with File Paths --------------------
-        $user->update($data);
+        $filePathsToUpdate['court_case_files'] = json_encode($courtFiles);
+        $filePathsToUpdate['court_case_close_file'] = json_encode($courtCloseFiles);
 
-        // -------------------- Redirect --------------------
-        return redirect()->route('users.index')->with('success', 'User created successfully.');
+        $user->update($filePathsToUpdate);
+
+        // -------------------- Update User with File Paths --------------------
+        // $role = Role::find($request->input('user_type'));
+        // if ($role) {
+        //     $user->assignRole($role->name);
+        // }
+
+        session([
+            'pdf_user_id' => $user->id,
+            'pdf_plain_password' => $plainPassword,
+        ]);
+
+        return redirect()->route('users.index')
+            ->with('success', 'Employee created successfully.')
+            ->with('auto_download_pdf', true);
     }
 
 
 
     public function show($id): View
     {
-        $user = User::find($id);
+        $user = User::findOrFail($id); // <-- throws 404 if user not found
+
         return view('users.show', compact('user'));
     }
 
@@ -221,105 +297,115 @@ class UserController extends Controller
     {
         $user = User::find($id);
         $roles = Role::pluck('name', 'id')->all();
-        $userRole = $user->roles->pluck('name', 'name')->all();
-        return view('users.edit', compact('user', 'roles', 'userRole'));
+
+        $permissions = Permission::all(); // Get all permissions for user-specific assignment
+            
+        $groupedPermissions = $permissions->groupBy(function ($item) {
+            $parts = explode('-', $item->name);
+            $group = Str::plural(end($parts)); 
+            return ucfirst($group);
+        });
+
+        $userRole = $user->roles->pluck('id')->first();
+        $userPermissions = $user->permissions->pluck('id')->toArray(); // Get user-specific permissions
+
+        return view('users.edit', compact('user', 'roles', 'permissions','groupedPermissions', 'userRole', 'userPermissions'));
     }
 
-    // public function update(Request $request, $id): RedirectResponse
-    // {
-    //     $this->validate($request, [
-    //         'name' => 'required',
-    //         'username' => 'required|string|max:50|unique:users,username,' . $id,
-    //         'email' => 'required|email|unique:users,email,' . $id,
-    //         'contact_number' => 'nullable|string|max:20|regex:/^(?:\+91[-\s]?)?[6-9]\d{9}$/',
-    //         'user_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-    //         'birthdate' => 'nullable|date|before:today',
-    //         'password' => 'same:confirm-password',
-    //         'roles' => 'required'
-    //     ]);
-    
-    //     $input = $request->all();
-    
-    //     if (!empty($input['password'])) {
-    //         $input['password'] = Hash::make($input['password']);
-    //     } else {
-    //         $input = Arr::except($input, ['password']);
-    //     }
-        
-    //     $user = User::findOrFail($id);
-
-    //     if($request->hasFile('user_photo'))
-    //     {
-    //         if (isset($user->user_photo))
-    //         {
-    //             $destination_path = public_path('uploads/users/'.$user->user_photo);
-    //             unlink($destination_path);
-    //         }
-            
-    //         $image = $request->file('user_photo');
-    //         $image_name = uniqid().".".$image->getClientOriginalExtension();
-    //         $destination_path = public_path('uploads/users/');
-    //         if (!file_exists($destination_path))
-    //         {
-    //             mkdir($destination_path, 0755, true);
-    //         }
-    //         if (file_exists($destination_path))
-    //         {
-    //             $image->move($destination_path, $image_name);
-    //         }
-    //         $input['user_photo'] = $image_name;
-    //     }                
-
-    //     $user->update($input);
-    
-    //     // Sync roles
-    //     DB::table('model_has_roles')->where('model_id', $id)->delete();
-    //     $user->assignRole($request->input('roles'));
-
-
-    //     return redirect()->route('users.index')
-    //         ->with('success', 'User updated successfully');
-    // }
     public function update(Request $request, $id)
     {
         $user = \App\Models\User::findOrFail($id);
 
-        // -------------------- Validation --------------------
-        $request->validate([
+        // -------------------- Build dynamic validation rules --------------------
+        $rules = [
             'username' => 'required|string|max:255',
-            'birthdate' => 'required|date',
-            'contact_number_1' => 'nullable|string|max:15',
-            'contact_number_2' => 'nullable|string|max:15',
+            'birthdate' => 'required|date|before_or_equal:' . now()->subYears(18)->format('Y-m-d'),
+            'contact_number_1' => 'nullable|string|max:10|min:10|regex:/^[0-9+\-\s]+$/',
+            'contact_number_2' => 'nullable|string|max:10|min:10|regex:/^[0-9+\-\s]+$/',
             'joining_date' => 'required|date',
-            'user_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'user_photo_id' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'user_address_proof' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'user_photo' => 'nullable|image|mimes:jpeg,png,jpg,pdf|max:2048',
+            'user_photo_id' => 'nullable|image|mimes:jpeg,png,jpg,pdf|max:2048',
+            'user_address_proof' => 'nullable|image|mimes:jpeg,png,jpg,pdf|max:2048',
             'employee_gender' => 'required|in:1,2',
             'insurance' => 'required|in:1,2',
-            'insurance_name' => 'nullable|string|max:255',
-            'insurance_policy_copy' => 'nullable|file|mimes:pdf,jpg,png',
-            'insurance_issue_date' => 'nullable|date',
-            'insurance_valid_date' => 'nullable|date',
-            'nominee' => 'required|in:1,2',
-            'nominee_name' => 'nullable|string|max:255',
-            'nominee_mobile_number' => 'nullable|string|max:15',
-            'nominee_photo_id' => 'nullable|file|mimes:jpg,png,jpeg',
-            'nominee_address_proof' => 'nullable|file|mimes:jpg,png,jpeg',
-            'nominee_gender' => 'nullable|in:1,2',
-            'nominee_birthdate' => 'nullable|date',
-            'insurance_note' => 'nullable|string|max:500',
             'user_type' => 'required|exists:roles,id',
+            'department' => 'required|string|max:255',
             'salary' => 'nullable|numeric',
             'licence' => 'nullable|file|mimes:pdf,jpg,png,jpeg',
             'bank' => 'required|in:1,2',
-            'bank_proof' => 'nullable|file|mimes:pdf,jpg,png,jpeg',
             'court' => 'required|in:1,2',
-            'court_case_file.*' => 'nullable|file|mimes:pdf,jpg,png,jpeg',
-            'court_case_close_file.*' => 'nullable|file|mimes:pdf,jpg,png,jpeg',
             'note' => 'nullable|string|max:1000',
+            // Permissions (user-specific)
+            'permissions' => 'nullable|array',
+            'permissions.*' => 'exists:permissions,id',
+            // Email validation (only check uniqueness if it's being changed)
+            'email' => 'nullable|email|unique:users,email,' . $id,
+        ];
+
+        if ($request->input('bank') == 2 && empty($user->bank_proof)) {
+            $rules['bank_proof'] = 'required|file|mimes:pdf,jpg,png,jpeg';
+        }
+
+        // Dynamic conditional rules for insurance
+        if ($request->input('insurance') == 2) {
+            $rules['insurance_name'] = 'required|string|max:255';
+            
+            if (empty($user->insurance_policy_copy) && !$request->hasFile('insurance_policy_copy')) {
+                $rules['insurance_policy_copy'] = 'required|file|mimes:pdf,jpg,png,jpeg';
+            } else {
+                $rules['insurance_policy_copy'] = 'nullable|file|mimes:pdf,jpg,png,jpeg';
+            }
+            $rules['insurance_issue_date'] = 'required|date';
+            $rules['insurance_valid_date'] = 'required|date';
+
+            $rules['nominee_name'] = 'required|string|max:255';
+            $rules['nominee_mobile_number'] = 'required|string|min:10|max:10|regex:/^[0-9+\-\s]+$/';
+            if (empty($user->nominee_photo_id) && !$request->hasFile('nominee_photo_id')) {
+                $rules['nominee_photo_id'] = 'required|file|mimes:jpg,png,jpeg,pdf'; 
+            } else {
+                $rules['nominee_photo_id'] = 'nullable|file|mimes:jpg,png,jpeg,pdf'; 
+            }
+
+            if (empty($user->nominee_address_proof) && !$request->hasFile('nominee_address_proof')) {
+                $rules['nominee_address_proof'] = 'required|file|mimes:jpg,png,jpeg,pdf';
+            } else {
+                $rules['nominee_address_proof'] = 'nullable|file|mimes:jpg,png,jpeg,pdf';
+            }
+
+            $rules['nominee_gender'] = 'required|in:1,2';
+            $rules['nominee_birthdate'] = 'required|date|before_or_equal:' . now()->subYears(18)->format('Y-m-d');
+        }
+
+        $courtCaseFiles = json_decode($user->court_case_files ?? '[]', true);
+        if ($request->input('court') == 2) {
+            if ((!is_array($courtCaseFiles) || count($courtCaseFiles) === 0) && !$request->hasFile('court_case_files')) {
+                $rules['court_case_files'] = 'required|array';
+                $rules['court_case_files.*'] = 'file|mimes:pdf,jpg,png,jpeg';
+            } else {
+                $rules['court_case_files.*'] = 'nullable|file|mimes:pdf,jpg,png,jpeg';
+            }
+        }
+        $rules['court_case_close_file.*'] = 'nullable|file|mimes:pdf,jpg,png,jpeg';
+
+        // -------------------- Validate --------------------
+        $validatedData = $request->validate($rules, [
+            'username.required' => 'Employee name is required.',
+            'birthdate.required' => 'Please provide a valid birthdate.',
+            'contact_number_1.regex' => 'Contact number format is invalid.',
+            'contact_number_2.regex' => 'Alternate contact number format is invalid.',
+            'user_type.required' => 'Please select a employee designation.',
+            'user_type.exists' => 'Selected employee designation is invalid.',
+            'department.required' => 'Department is required.',
+            'salary.numeric' => 'Salary must be a valid number.',
+            'licence.mimes' => 'License must be a file of type: pdf, jpg, png, jpeg.',
+            'bank_proof.mimes' => 'Bank proof must be a file of type: pdf, jpg, png, jpeg.',
+            'court_case_files.*.mimes' => 'Each court file must be a valid file (pdf, jpg, png, jpeg).',
+            'court_case_close_file.*.mimes' => 'Each court close file must be a valid file (pdf, jpg, png, jpeg).',
+            'note.max' => 'Note cannot exceed 1000 characters.',
+            'email.unique' => 'This email address is already in use. Please provide a different email address.',
         ]);
 
-        // -------------------- Prepare user folder --------------------
+        // -------------------- Create user folder if needed --------------------
         $userFolder = 'uploads/users/user_' . $user->id;
         $subFolders = ['bank', 'nominee', 'insurance', 'court_case', 'court_case_close'];
 
@@ -330,27 +416,32 @@ class UserController extends Controller
             }
         }
 
+        // -------------------- Extract non-file data --------------------
         $data = $request->except([
             'user_photo', 'user_photo_id', 'user_address_proof', 'insurance_policy_copy',
             'nominee_photo_id', 'nominee_address_proof', 'licence', 'bank_proof',
-            'court_case_file', 'court_case_close_file'
+            'court_case_files', 'court_case_close_file'
         ]);
 
-        // -------------------- Main files --------------------
+        $data['name'] = $request->username;
+        if (empty($data['email'])) {
+            $data['email'] = trim(str_replace(' ', '', strtolower($request->username))) . '@krishnaminerals.com';
+        }
+
+        // -------------------- Upload Main Files --------------------
         $mainFolderFiles = ['user_photo', 'user_photo_id'];
         foreach ($mainFolderFiles as $file) {
             if ($request->hasFile($file)) {
-                // Delete old file if exists
                 if (!empty($user->$file) && file_exists(public_path($user->$file))) {
                     unlink(public_path($user->$file));
                 }
-                $filename = time() . '_' . $request->file($file)->getClientOriginalName();
+                $filename = time() . '_' . uniqid() . '_' . $request->file($file)->getClientOriginalName();
                 $request->file($file)->move(public_path($userFolder), $filename);
                 $data[$file] = "$userFolder/$filename";
             }
         }
 
-        // -------------------- Subfolder files --------------------
+        // -------------------- Upload Subfolder Files --------------------
         $fileMap = [
             'user_address_proof' => '',
             'insurance_policy_copy' => 'insurance',
@@ -365,62 +456,58 @@ class UserController extends Controller
                 if (!empty($user->$file) && file_exists(public_path($user->$file))) {
                     unlink(public_path($user->$file));
                 }
-                $filename = time() . '_' . $request->file($file)->getClientOriginalName();
+                $filename = time() . '_' . uniqid() . '_' . $request->file($file)->getClientOriginalName();
                 $path = $subFolder ? "$userFolder/$subFolder" : $userFolder;
                 $request->file($file)->move(public_path($path), $filename);
                 $data[$file] = "$path/$filename";
             }
         }
 
-        // -------------------- Court Case Files --------------------
-        $courtFiles = json_decode($user->court_case_file, true) ?? [];
-        if ($request->hasFile('court_case_file')) {
-            foreach ($request->file('court_case_file') as $file) {
-                $filename = time() . '_' . $file->getClientOriginalName();
+        // -------------------- Handle Court Case Files --------------------
+        $courtFiles = json_decode($user->court_case_files ?? '[]', true);
+        if (!is_array($courtFiles)) $courtFiles = [];
+
+        if ($request->hasFile('court_case_files')) {
+            foreach ($request->file('court_case_files') as $file) {
+                $filename = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
                 $file->move(public_path("$userFolder/court_case"), $filename);
                 $courtFiles[] = "$userFolder/court_case/$filename";
             }
         }
-        $data['court_case_file'] = json_encode($courtFiles);
+        $data['court_case_files'] = json_encode($courtFiles);
 
-        $courtCloseFiles = json_decode($user->court_case_close_file, true) ?? [];
+        // -------------------- Handle Court Case Close Files --------------------
+        $courtCloseFiles = json_decode($user->court_case_close_file ?? '[]', true);
+        if (!is_array($courtCloseFiles)) $courtCloseFiles = [];
+
         if ($request->hasFile('court_case_close_file')) {
             foreach ($request->file('court_case_close_file') as $file) {
-                $filename = time() . '_' . $file->getClientOriginalName();
+                $filename = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
                 $file->move(public_path("$userFolder/court_case_close"), $filename);
                 $courtCloseFiles[] = "$userFolder/court_case_close/$filename";
             }
         }
         $data['court_case_close_file'] = json_encode($courtCloseFiles);
 
-        // -------------------- Additional fields --------------------
-        $data['name'] = $request->username;
-        if (empty($data['email'])) {
-            $data['email'] = strtolower($request->username) . '@gmail.com';
-        }
+        // -------------------- Update Role --------------------
+        // NOTE: We're not automatically assigning the role anymore to ensure
+        // permissions are based purely on user ID, not role inheritance
+        // $role = Role::find($request->input('user_type'));
+        // if ($role) {
+        //     $user->syncRoles([$role->name]); // Replace previous role
+        // }
+
+        // Sync direct permissions (user-specific, bypassing roles)
+        $permissionIds = $request->input('permissions', []);
+        $permissions = Permission::whereIn('id', $permissionIds)->get();
+        $user->syncPermissions($permissions); // This replaces all existing permissions for the user
 
         // -------------------- Update User --------------------
         $user->update($data);
 
-        return redirect()->route('users.index')->with('success', 'User updated successfully.');
+        return redirect()->route('users.editIndex')->with('success', 'Employee updated successfully.');
     }
 
-
-
-    // public function destroy($id): RedirectResponse
-    // {
-    //     $user = User::find($id);
-
-    //     if ($user->user_photo)
-    //     {
-    //         $destination_path = public_path('uploads/users/').$user->user_photo;
-    //         unlink($destination_path);
-    //     }
-    //     $user->delete();
-        
-    //     return redirect()->route('users.index')
-    //         ->with('success', 'User deleted successfully');
-    // }
     public function destroy($id)
     {
         $user = \App\Models\User::findOrFail($id);
@@ -436,7 +523,7 @@ class UserController extends Controller
         // -------------------- Delete user from database --------------------
         $user->delete();
 
-        return redirect()->route('users.index')->with('success', 'User deleted successfully.');
+        return redirect()->route('users.index')->with('success', 'Employee deleted successfully.');
     }
 
     /**
@@ -458,39 +545,50 @@ class UserController extends Controller
         rmdir($folder);
     }
 
+    public function streamPdf(User $user)
+    {
+        // Get plain password from session, or fallback
+        $plainPassword = session('pdf_plain_password', 'N/A');
+    
+        $pdfData = [
+            'username' => $user->username,
+            'email' => $user->email,
+            'password' => $plainPassword,
+            'department' => $user->department,
+            'salary'=> $user->salary,
+            'created_at' => $user->created_at->timezone('Asia/Kolkata')->format('d-m-Y H:i:s'),
 
-    // public function register(Request $request)
-    // {
-    //     $this->validate($request, [
-    //         'username' => 'required|string|max:50|unique:users,username',
-    //     ]);
+        ];
+    
+        $pdf = \PDF::loadView('users.pdf', $pdfData);
+    
+        return $pdf->download('User_Credentials.pdf');
+    }
 
-    //     $username = trim($request->username);
-    //     $password = \Illuminate\Support\Str::random(10);
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'old_password' => 'required|string',
+            'password' => 'required|string|min:8|confirmed',
+        ], [
+            'old_password.required' => 'Old password is required.',
+            'password.required' => 'New password is required.',
+            'password.min' => 'Password must be at least 8 characters.',
+            'password.confirmed' => 'Password confirmation does not match.',
+        ]);
 
-    //     $user = User::create([
-    //         'name' => $username,
-    //         'username' => $username,
-    //         'email' => 'temp_' . uniqid() . '@gmail.com',
-    //         'password' => Hash::make($password),
-    //     ]);
+        $user = Auth::user();
+        
+        // Check if the old password matches
+        if (!Hash::check($request->old_password, $user->password)) {
+            return redirect()->back()->withErrors(['old_password' => 'The old password is incorrect.']);
+        }
 
-    //     $cleanUsername = preg_replace('/[^a-z0-9]/i', '', strtolower($username));
-    //     $email = $cleanUsername . $user->id . '@gmail.com';
-    //     $user->update(['email' => $email]);
+        // Update with new password
+        $user->password = Hash::make($request->password);
+        $user->save();
 
-    //     $defaultRole = 'admin';
-    //     if (Role::where('name', $defaultRole)->exists()) {
-    //         $user->assignRole($defaultRole);
-    //     }
-
-    //     $pdf = Pdf::loadView('users.pdf', [
-    //         'username' => $username,
-    //         'email'    => $email,
-    //         'password' => $password,
-    //         'created_at' => $user->created_at->format('d-m-Y H:i:s'),
-    //     ]);
-
-    //     return $pdf->download('User_Credentials.pdf');
-    // }
+        return redirect()->back()->with('success', 'Password changed successfully.');
+    }
 }
+

@@ -2,10 +2,10 @@
 
 @section('content')
 
-    <main class="nxl-container">
-        <div class="nxl-content">
+    <div class="wrapper">
+        <div class="page-wrapper">
             <!-- [ Main Content ] start -->
-            <div class="main-content">
+            <div class="page-content">
                 <div class="row">
                     <div class="col-lg-12">
                         @if (count($errors) > 0)
@@ -19,12 +19,12 @@
                             </div>
                         @endif
                         <div class="card stretch stretch-full">
-                            <div class="card-header">
+                            <div class="card-header d-flex justify-content-between align-items-center">
                                 <h5 class="card-title">Edit Role:</h5>
                                 <div class="card-header-action">
                                     <div class="card-header-btn">         
                                         <a class="btn btn-sm btn-primary" href="{{ route('roles.index') }}">
-                                            <i class="fa fa-arrow-left"></i>
+                                            <i class="bx bx-arrow-to-left"></i>
                                         </a>
                                     </div>
                                 </div>
@@ -36,7 +36,7 @@
                                 <div class="card-body general-info">
                                     <div class="row mb-4 align-items-center">
                                         <div class="col-lg-4">
-                                            <label for="nameInput" class="fw-semibold">Name: </label>
+                                            <label for="nameInput" class="form-label">Name: </label>
                                         </div>
                                         <div class="col-lg-8">
                                             <div class="input-group">
@@ -80,6 +80,6 @@
             </div>
             <!-- [ Main Content ] end -->
         </div>
-    </main>
+    </div>
 
 @endsection

@@ -23,7 +23,7 @@ class SettingsController extends Controller
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', 
             'name' => 'required|max:255',
             'tagline' => 'nullable|string|max:255',
-            'favicon' => 'nullable|image|mimes:png,ico|max:1024',            
+            'favicon' => 'nullable|image|mimes:png,jpg,jpeg|max:1024',            
             'gst_number' => [
                 'nullable',
                 'string',

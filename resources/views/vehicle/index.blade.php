@@ -11,7 +11,7 @@
                     $i = ($vehicles->currentPage() - 1) * $vehicles->perPage();
                     @endphp
                     <!-- [Leads] start -->
-                    <div class="col-xxl-8">
+                    <div class="col-xxl-12">
                         @session('success')
                             <div class="alert alert-success" role="alert"> 
                                 {{ $value }}

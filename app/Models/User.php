@@ -18,6 +18,8 @@ class User extends Authenticatable
         'user_photo',
         'user_photo_id',
         'user_type',
+        'department',
+        'salary',
         'birthdate',
         'password',
         'contact_number_1',
@@ -30,7 +32,6 @@ class User extends Authenticatable
         'insurance_policy_copy',
         'insurance_issue_date',
         'insurance_valid_date',
-        'nominee',
         'nominee_name',
         'nominee_mobile_number',
         'nominee_photo_id',
@@ -45,16 +46,13 @@ class User extends Authenticatable
         'court_case_files',
         'court_case_close_file',
         'note'
-
-
     ];
     protected $hidden = ['password', 'remember_token'];
 
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'last_login_at' => 'datetime',
+    ];
+
 }

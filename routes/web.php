@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\SalesController;
 use App\Http\Controllers\VehicleController;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 // Redirect root URL to /home if logged in, or to login otherwise
 Route::get('/', function () {
@@ -27,6 +28,9 @@ Route::post('/register', [UserController::class, 'register'])->name('users.regis
 
 // Protected routes (only accessible when logged in)
 Route::middleware(['auth'])->group(function () {
+
+    Route::get('/users/editindex', [UserController::class, 'editIndex'])->name('users.editIndex');
+
     Route::resource('roles', RoleController::class);
     Route::resource('users', UserController::class);
     Route::resource('sales', SalesController::class);
@@ -37,4 +41,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/settings/edit', [SettingsController::class, 'edit'])->name('settings.edit');
     Route::post('/settings/update', [SettingsController::class, 'update'])->name('settings.update');
 
+    
+
+    
+    Route::post('/change-password', [App\Http\Controllers\UserController::class, 'changePassword'])->name('user.changePassword');
+    
+    Route::get('/users/{user}/credentials-pdf', [UserController::class, 'streamPdf'])->name('users.credentials-pdf');
 });
+
