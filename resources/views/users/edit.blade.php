@@ -331,49 +331,56 @@
                                             {{ old('court', $user->court) == 2 ? 'checked' : '' }}>
                                         <label class="form-check-label" for="court_yes">YES</label>
                                     </div>
+
                                     <div id="showCourt" class="{{ old('court', $user->court) == 2 ? '' : 'd-none' }} mt-3">
                                         @php
-                                            $courtFiles = json_decode($user->court_case_files, true) ?? [];
-                                            $courtCloseFiles = json_decode($user->court_case_close_file, true) ?? [];
+                                            $courtCases = json_decode($user->court_case_files ?? '[]', true) ?? [];
                                         @endphp
 
                                         <div id="case-files-wrapper">
-                                            @if(count($courtFiles) || count($courtCloseFiles))
-                                                @foreach($courtFiles as $index => $file)
-                                                    <div class="row align-items-center">
-                                                        <div class="col-lg-5 mb-3">
+                                            @if(count($courtCases))
+                                                @foreach($courtCases as $caseIndex => $courtCase)
+                                                    <div class="row align-items-center mb-3 existing-case" data-index="{{ $caseIndex }}">
+                                                        <div class="col-lg-5">
                                                             <label>Case Details File</label><br>
-                                                            <a href="{{ asset($file) }}" target="_blank" class="badge bg-secondary text-white text-decoration-none view-file" data-bs-toggle="modal" data-bs-target="#imageDownload" data-file="{{ asset($file) }}">View File</a>
-                                                            <input type="file" name="court_case_files[]" class="form-control mt-2">
-                                                        </div>
-                                                        <div class="col-lg-5 mb-3">
-                                                            <label>Case Close File</label><br>
-                                                            {{-- show matching close file if exists --}}
-                                                            @if(isset($courtCloseFiles[$index]))
-                                                                <a href="{{ asset($courtCloseFiles[$index]) }}" target="_blank" class="badge bg-secondary text-white text-decoration-none view-file" data-bs-toggle="modal" data-bs-target="#imageDownload" data-file="{{ asset($courtCloseFiles[$index]) }}">View File</a>
+                                                            @if(!empty($courtCase['case_files']))
+                                                                @foreach($courtCase['case_files'] as $file)
+                                                                    <a href="{{ asset($file) }}" target="_blank" class="badge bg-secondary text-white view-file" data-bs-toggle="modal" data-bs-target="#imageDownload" data-file="{{ asset($file) }}">View File</a>
+                                                                @endforeach
                                                             @endif
-                                                            <input type="file" name="court_case_close_file[]" class="form-control mt-2">
+                                                            <input type="file" name="court_case_files[{{ $caseIndex }}][]" class="form-control mt-2" {{ !empty($courtCase['case_files']) ? 'disabled' : '' }}>
+                                                        </div>
+                                                        <div class="col-lg-5">
+                                                            <label>Case Close File</label><br>
+                                                            @if(!empty($courtCase['case_close_files']))
+                                                                @foreach($courtCase['case_close_files'] as $closeFile)
+                                                                    <a href="{{ asset($closeFile) }}" target="_blank" class="badge bg-secondary text-white view-file" data-bs-toggle="modal" data-bs-target="#imageDownload" data-file="{{ asset($closeFile) }}">View File</a>
+                                                                @endforeach
+                                                            @endif
+                                                            <input type="file" name="court_case_close_file[{{ $caseIndex }}][]" class="form-control mt-2" {{ !empty($courtCase['case_close_files']) ? 'disabled' : '' }}>
                                                         </div>
                                                     </div>
                                                 @endforeach
+
                                             @else
-                                                <div class="row align-items-center">
-                                                    <div class="col-lg-5 mb-3">
+                                                <div class="row align-items-center mb-3">
+                                                    <div class="col-lg-5">
                                                         <label>Case Details File</label>
-                                                        <input type="file" name="court_case_files[]" class="form-control" accept=".jpg, .jpeg, .png, .pdf">
-                                                        @error('court_case_files')<div class="text-danger">{{ $message }}</div>@enderror
+                                                        <input type="file" name="court_case_files[0][]" class="form-control" accept=".jpg,.jpeg,.png,.pdf" multiple>
                                                     </div>
-                                                    <div class="col-lg-5 mb-3">
+                                                    <div class="col-lg-5">
                                                         <label>Case Close File</label>
-                                                        <input type="file" name="court_case_close_file[]" class="form-control" accept=".jpg, .jpeg, .png, .pdf">
+                                                        <input type="file" name="court_case_close_file[0][]" class="form-control" accept=".jpg,.jpeg,.png,.pdf" multiple>
                                                     </div>
                                                 </div>
                                             @endif
                                         </div>
 
-                                        <button type="button" class="btn btn-primary mt-3" id="add-fields">Add More Files</button>
 
+
+                                        <button type="button" class="btn btn-primary mt-3" id="add-fields">Add More Case</button>
                                     </div>
+
 
                                     {{-- Notes --}}
                                     <hr class="mt-3">
@@ -574,16 +581,20 @@
             // -------------------- Add/Remove Court Case Fields --------------------
 
             $('#add-fields').click(function () {
+                const newIndex = $('#case-files-wrapper .new-case').length;
+
                 const newFields = `
-                    <div class="row mb-3 align-items-center">
+                    <div class="row mb-3 align-items-center new-case">
                         <div class="col-lg-5">
-                            <input type="file" name="court_case_files[]" class="form-control">
+                            <input type="file" name="court_case_files[new_${newIndex}][]" class="form-control">
                         </div>
                         <div class="col-lg-5">
-                            <input type="file" name="court_case_close_file[]" class="form-control">
+                            <input type="file" name="court_case_close_file[new_${newIndex}][]" class="form-control">
                         </div>
                         <div class="col-lg-2 text-end mt-2">
-                            <button type="button" class="btn btn-danger btn-sm remove-fields"><i class="bx bx-trash"></i></button>
+                            <button type="button" class="btn btn-danger btn-sm remove-fields">
+                                <i class="bx bx-trash"></i>
+                            </button>
                         </div>
                     </div>`;
                 $('#case-files-wrapper').append(newFields);
@@ -591,7 +602,15 @@
 
             $(document).on('click', '.remove-fields', function () {
                 $(this).closest('.row').remove();
+
+                // Reindex only new rows
+                $('#case-files-wrapper .new-case').each(function (i, row) {
+                    $(row).find('input[name^="court_case_files"]').attr('name', `court_case_files[new_${i}][]`);
+                    $(row).find('input[name^="court_case_close_file"]').attr('name', `court_case_close_file[new_${i}][]`);
+                });
             });
+
+
 
             // -------------------- Mobile Number Toggle --------------------
             $('#showMobile2').on('click', function () {

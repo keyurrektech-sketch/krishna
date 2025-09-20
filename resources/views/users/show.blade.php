@@ -175,31 +175,54 @@
                                 </div>
                             </div>
                             <hr class="mt-0">
-                            <h5 class="mb-3">Employee Court Case</h5>
-                            <div class="row mb-4 d-flex align-items-center">
-                                @php
-                                    $courtFiles = json_decode($user->court_case_files, true) ?? [];
-                                    $courtCloseFiles = json_decode($user->court_case_close_file, true) ?? [];
-                                @endphp
-                                @if(count($courtFiles))
-                                <div class="col-lg-4 fw-medium">Case Details File</div>
-                                    <div class="col">
-                                    @foreach($courtFiles as $index => $file)
-                                        {!! renderFile(asset($file)) !!}
-                                    @endforeach
-                                    </div>
-                                @endif
-                            </div>
-                            <div class="row mb-4 d-flex align-items-center"> 
-                                @if(count($courtCloseFiles))
-                                <div class="col-lg-4 fw-medium">Case Close File</div>
-                                    <div class="col">
-                                        @foreach($courtCloseFiles as $index => $file)
-                                            {!! renderFile(asset($file)) !!}
-                                        @endforeach
-                                    </div>
-                                @endif
-                            </div>     
+                            <h5 class="mb-3">Employee Court Cases</h5>
+                            @php
+                                $courtCases = json_decode($user->court_case_files, true);
+                                if (!is_array($courtCases)) {
+                                    $courtCases = [];
+                                }
+                            @endphp
+
+                            @if(!empty($courtCases))
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th style="width: 50%;">Case Details Files</th>
+                                                <th style="width: 50%;">Case Close Files</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($courtCases as $case)
+                                                <tr>
+                                                    <!-- Case Details Files Column -->
+                                                    <td>
+                                                        @if(!empty($case['case_files']) && is_array($case['case_files']))
+                                                            @foreach($case['case_files'] as $file)
+                                                                <div class="mb-1">{!! renderFile(asset($file)) !!}</div>
+                                                            @endforeach
+                                                        @else
+                                                            <span class="text-muted">No files uploaded</span>
+                                                        @endif
+                                                    </td>
+
+                                                    <!-- Case Close Files Column -->
+                                                    <td>
+                                                        @if(!empty($case['case_close_files']) && is_array($case['case_close_files']))
+                                                            @foreach($case['case_close_files'] as $file)
+                                                                <div class="mb-1">{!! renderFile(asset($file)) !!}</div>
+                                                            @endforeach
+                                                        @else
+                                                            <span class="text-muted">No files uploaded</span>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            @endif
+
                             <hr class="mt-0">
                             <h5 class="mb-3">Note</h5>
                             <div class="row mb-4">

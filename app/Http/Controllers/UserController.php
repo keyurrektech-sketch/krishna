@@ -243,28 +243,53 @@ class UserController extends Controller
         }
 
         // Handle multiple court case files
-        $courtFiles = [];
-        if ($request->hasFile('court_case_files')) {
-            foreach ($request->file('court_case_files') as $file) {
-                $filename = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
-                $file->move(public_path("$userFolder/court_case"), $filename);
-                $courtFiles[] = "$userFolder/court_case/$filename";
+        $courtCases = []; // main array holding each court case
+
+        // Determine the maximum number of cases submitted
+        $maxCases = max(
+            count($request->file('court_case_files') ?? []),
+            count($request->file('court_case_close_file') ?? [])
+        );
+
+        for ($i = 0; $i < $maxCases; $i++) {
+            $caseFiles = [];
+            $closeFiles = [];
+
+            // Handle case files
+            if ($request->hasFile('court_case_files') && isset($request->file('court_case_files')[$i])) {
+                $files = $request->file('court_case_files')[$i];
+                // Make sure $files is an array (in case of multiple upload input)
+                if (!is_array($files)) $files = [$files];
+
+                foreach ($files as $file) {
+                    $filename = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
+                    $file->move(public_path("$userFolder/court_case"), $filename);
+                    $caseFiles[] = "$userFolder/court_case/$filename";
+                }
             }
+
+            // Handle case close files
+            if ($request->hasFile('court_case_close_file') && isset($request->file('court_case_close_file')[$i])) {
+                $files = $request->file('court_case_close_file')[$i];
+                if (!is_array($files)) $files = [$files];
+
+                foreach ($files as $file) {
+                    $filename = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
+                    $file->move(public_path("$userFolder/court_case_close"), $filename);
+                    $closeFiles[] = "$userFolder/court_case_close/$filename";
+                }
+            }
+
+            // Add this case to the main array
+            $courtCases[] = [
+                'case_files' => $caseFiles,
+                'case_close_files' => $closeFiles
+            ];
         }
 
-        // Handle court case close files
-        $courtCloseFiles = [];
-        if ($request->hasFile('court_case_close_file')) {
-            foreach ($request->file('court_case_close_file') as $file) {
-                $filename = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
-                $file->move(public_path("$userFolder/court_case_close"), $filename);
-                $courtCloseFiles[] = "$userFolder/court_case_close/$filename";
-            }
-        }
+        // Store as single JSON column
+        $filePathsToUpdate['court_case_files'] = json_encode($courtCases);
 
-        // -------------------- Update User with File Paths --------------------
-        $filePathsToUpdate['court_case_files'] = json_encode($courtFiles);
-        $filePathsToUpdate['court_case_close_file'] = json_encode($courtCloseFiles);
 
         $user->update($filePathsToUpdate);
 
@@ -376,16 +401,36 @@ class UserController extends Controller
             $rules['nominee_birthdate'] = 'required|date|before_or_equal:' . now()->subYears(18)->format('Y-m-d');
         }
 
-        $courtCaseFiles = json_decode($user->court_case_files ?? '[]', true);
+        $courtCases = json_decode($user->court_case_files ?? '[]', true);
+
+        // Only apply validation if court == 2
         if ($request->input('court') == 2) {
-            if ((!is_array($courtCaseFiles) || count($courtCaseFiles) === 0) && !$request->hasFile('court_case_files')) {
-                $rules['court_case_files'] = 'required|array';
-                $rules['court_case_files.*'] = 'file|mimes:pdf,jpg,png,jpeg';
-            } else {
-                $rules['court_case_files.*'] = 'nullable|file|mimes:pdf,jpg,png,jpeg';
+
+            // Check if there are any existing case files
+            $hasExistingFiles = false;
+            if (is_array($courtCases) && count($courtCases) > 0) {
+                foreach ($courtCases as $case) {
+                    if (!empty($case['case_files'])) {
+                        $hasExistingFiles = true;
+                        break;
+                    }
+                }
             }
+
+            // Validation rules
+            if (!$hasExistingFiles && !$request->hasFile('court_case_files')) {
+                // No existing files, new upload is required
+                $rules['court_case_files'] = 'required|array';
+                $rules['court_case_files.*.*'] = 'file|mimes:pdf,jpg,png,jpeg';
+            } else {
+                // Existing files present, new upload is optional
+                $rules['court_case_files.*.*'] = 'nullable|file|mimes:pdf,jpg,png,jpeg';
+            }
+
+            // Close files are always optional
+            $rules['court_case_close_file.*.*'] = 'nullable|file|mimes:pdf,jpg,png,jpeg';
         }
-        $rules['court_case_close_file.*'] = 'nullable|file|mimes:pdf,jpg,png,jpeg';
+
 
         // -------------------- Validate --------------------
         $validatedData = $request->validate($rules, [
@@ -464,30 +509,57 @@ class UserController extends Controller
         }
 
         // -------------------- Handle Court Case Files --------------------
-        $courtFiles = json_decode($user->court_case_files ?? '[]', true);
-        if (!is_array($courtFiles)) $courtFiles = [];
+        // Decode existing court cases
+        $courtCases = json_decode($user->court_case_files ?? '[]', true);
+        if (!is_array($courtCases)) $courtCases = [];
 
-        if ($request->hasFile('court_case_files')) {
-            foreach ($request->file('court_case_files') as $file) {
-                $filename = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
-                $file->move(public_path("$userFolder/court_case"), $filename);
-                $courtFiles[] = "$userFolder/court_case/$filename";
+        // Get uploaded files arrays
+        $newCourtFiles = $request->file('court_case_files') ?? [];
+        $newCourtCloseFiles = $request->file('court_case_close_file') ?? [];
+
+        // Helper function to move uploaded files
+        function moveUploadedFiles($files, $folder, $userFolder) {
+            $paths = [];
+            if (!$files) return $paths; // handle null
+            if (!is_array($files)) $files = [$files];
+            foreach ($files as $file) {
+                if ($file && $file->isValid()) {
+                    $filename = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
+                    $file->move(public_path("$userFolder/$folder"), $filename);
+                    $paths[] = "$userFolder/$folder/$filename";
+                }
+            }
+            return $paths;
+        }
+
+        // Collect all possible indexes (existing + new)
+        $allIndexes = array_unique(array_merge(
+            array_keys($courtCases),
+            array_keys($newCourtFiles),
+            array_keys($newCourtCloseFiles)
+        ));
+        sort($allIndexes);
+
+        foreach ($allIndexes as $index) {
+            // Move uploaded files (handles null or single files)
+            $caseFiles = moveUploadedFiles($newCourtFiles[$index] ?? [], 'court_case', $userFolder);
+            $closeFiles = moveUploadedFiles($newCourtCloseFiles[$index] ?? [], 'court_case_close', $userFolder);
+
+            if (isset($courtCases[$index])) {
+                // Merge with existing files
+                $courtCases[$index]['case_files'] = array_merge($courtCases[$index]['case_files'] ?? [], $caseFiles);
+                $courtCases[$index]['case_close_files'] = array_merge($courtCases[$index]['case_close_files'] ?? [], $closeFiles);
+            } elseif (!empty($caseFiles) || !empty($closeFiles)) {
+                // Add as new case
+                $courtCases[$index] = [
+                    'case_files' => $caseFiles,
+                    'case_close_files' => $closeFiles,
+                ];
             }
         }
-        $data['court_case_files'] = json_encode($courtFiles);
 
-        // -------------------- Handle Court Case Close Files --------------------
-        $courtCloseFiles = json_decode($user->court_case_close_file ?? '[]', true);
-        if (!is_array($courtCloseFiles)) $courtCloseFiles = [];
-
-        if ($request->hasFile('court_case_close_file')) {
-            foreach ($request->file('court_case_close_file') as $file) {
-                $filename = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
-                $file->move(public_path("$userFolder/court_case_close"), $filename);
-                $courtCloseFiles[] = "$userFolder/court_case_close/$filename";
-            }
-        }
-        $data['court_case_close_file'] = json_encode($courtCloseFiles);
+        // Reindex sequentially and save
+        $data['court_case_files'] = json_encode(array_values($courtCases));
 
         // -------------------- Update Role --------------------
         // NOTE: We're not automatically assigning the role anymore to ensure
