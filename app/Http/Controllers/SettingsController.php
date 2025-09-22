@@ -48,14 +48,14 @@ class SettingsController extends Controller
         foreach (['logo', 'favicon', 'authorized_signatory'] as $field) {
             if ($request->hasFile($field)) {
                 if (!empty($settings?->$field)) {
-                    $oldPath = public_path('uploads/' . $settings->$field);
+                    $oldPath = 'uploads/' . $settings->$field;
                     if (file_exists($oldPath)) {
                         unlink($oldPath);
                     }
                 }
                 $image = $request->file($field);
                 $image_name = uniqid() . "." . $image->getClientOriginalExtension();
-                $image->move(public_path('uploads'), $image_name);
+                $image->move('uploads', $image_name);
                 $validated[$field] = $image_name;
             }
         }

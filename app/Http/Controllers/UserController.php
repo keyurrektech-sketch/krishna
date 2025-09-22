@@ -211,10 +211,10 @@ class UserController extends Controller
         ];
 
         // Create main folder and subfolders
-        if (!file_exists(public_path($userFolder))) {
-            mkdir(public_path($userFolder), 0755, true);
+        if (!file_exists($userFolder)) {
+            mkdir($userFolder, 0755, true);
             foreach ($subFolders as $sub) {
-                mkdir(public_path("$userFolder/$sub"), 0755, true);
+                mkdir("$userFolder/$sub", 0755, true);
             }
         }
 
@@ -237,7 +237,7 @@ class UserController extends Controller
             if ($request->hasFile($file)) {
                 $filename = time() . '_' . uniqid() . '_' . $request->file($file)->getClientOriginalName();
                 $path = $subFolder ? "$userFolder/$subFolder" : $userFolder;
-                $request->file($file)->move(public_path($path), $filename);
+                $request->file($file)->move($path, $filename);
                 $filePathsToUpdate[$file] = "$path/$filename";
             }
         }
@@ -263,7 +263,7 @@ class UserController extends Controller
 
                 foreach ($files as $file) {
                     $filename = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
-                    $file->move(public_path("$userFolder/court_case"), $filename);
+                    $file->move("$userFolder/court_case", $filename);
                     $caseFiles[] = "$userFolder/court_case/$filename";
                 }
             }
@@ -275,7 +275,7 @@ class UserController extends Controller
 
                 foreach ($files as $file) {
                     $filename = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
-                    $file->move(public_path("$userFolder/court_case_close"), $filename);
+                    $file->move("$userFolder/court_case_close", $filename);
                     $closeFiles[] = "$userFolder/court_case_close/$filename";
                 }
             }
@@ -454,10 +454,10 @@ class UserController extends Controller
         $userFolder = 'uploads/users/user_' . $user->id;
         $subFolders = ['bank', 'nominee', 'insurance', 'court_case', 'court_case_close'];
 
-        if (!file_exists(public_path($userFolder))) {
-            mkdir(public_path($userFolder), 0755, true);
+        if (!file_exists($userFolder)) {
+            mkdir($userFolder, 0755, true);
             foreach ($subFolders as $sub) {
-                mkdir(public_path("$userFolder/$sub"), 0755, true);
+                mkdir("$userFolder/$sub", 0755, true);
             }
         }
 
@@ -477,11 +477,11 @@ class UserController extends Controller
         $mainFolderFiles = ['user_photo', 'user_photo_id'];
         foreach ($mainFolderFiles as $file) {
             if ($request->hasFile($file)) {
-                if (!empty($user->$file) && file_exists(public_path($user->$file))) {
-                    unlink(public_path($user->$file));
+                if (!empty($user->$file) && file_exists($user->$file)) {
+                    unlink($user->$file);
                 }
                 $filename = time() . '_' . uniqid() . '_' . $request->file($file)->getClientOriginalName();
-                $request->file($file)->move(public_path($userFolder), $filename);
+                $request->file($file)->move($userFolder, $filename);
                 $data[$file] = "$userFolder/$filename";
             }
         }
@@ -498,12 +498,12 @@ class UserController extends Controller
 
         foreach ($fileMap as $file => $subFolder) {
             if ($request->hasFile($file)) {
-                if (!empty($user->$file) && file_exists(public_path($user->$file))) {
-                    unlink(public_path($user->$file));
+                if (!empty($user->$file) && file_exists($user->$file)) {
+                    unlink($user->$file);
                 }
                 $filename = time() . '_' . uniqid() . '_' . $request->file($file)->getClientOriginalName();
                 $path = $subFolder ? "$userFolder/$subFolder" : $userFolder;
-                $request->file($file)->move(public_path($path), $filename);
+                $request->file($file)->move($path, $filename);
                 $data[$file] = "$path/$filename";
             }
         }
@@ -525,7 +525,7 @@ class UserController extends Controller
             foreach ($files as $file) {
                 if ($file && $file->isValid()) {
                     $filename = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
-                    $file->move(public_path("$userFolder/$folder"), $filename);
+                    $file->move("$userFolder/$folder", $filename);
                     $paths[] = "$userFolder/$folder/$filename";
                 }
             }
@@ -585,7 +585,7 @@ class UserController extends Controller
         $user = \App\Models\User::findOrFail($id);
 
         // -------------------- Delete user files --------------------
-        $userFolder = public_path('uploads/users/user_' . $user->id);
+        $userFolder = 'uploads/users/user_' . $user->id;
 
         if (file_exists($userFolder)) {
             // Recursive delete function
