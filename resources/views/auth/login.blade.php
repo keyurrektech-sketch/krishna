@@ -8,7 +8,7 @@
 				<div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3">
 					<div class="col mx-auto">
 						<div class="mb-3 text-center">
-							<img src="{{ $settings && $settings->logo ? asset('uploads/'.$settings->logo) : asset('uploads/user.png')}}" width="60" alt="" style="width: 180px;">
+							<img src="{{ $settings && $settings->logo ? asset('storage/uploads/' . $settings->logo) : asset('uploads/user.png')}}" width="60" alt="" style="width: 180px;">
 						</div>
 						<div class="card mb-0">
 							<div class="card-body">

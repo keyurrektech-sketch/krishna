@@ -37,8 +37,8 @@
                                                 <label for="logo" class="form-label">Old Logo</label>
                                             </div>
                                             <div class="col-md-6">
-                                                <a href="{{ asset('uploads/'.$settings->logo) }}" target="_blank">
-                                                    <img src="{{ asset('uploads/'.$settings->logo) }}" alt="{{$settings->logo}}" width="50">
+                                                <a href="{{ asset('storage/uploads/' . $settings->logo) }}" target="_blank">
+                                                    <img src="{{ asset('storage/uploads/' . $settings->logo) }}" alt="{{$settings->logo}}" width="100">
                                                 </a>                    
                                             </div>
                                         </div>
@@ -82,8 +82,8 @@
                                                 <label for="favicon" class="form-label">Old Favicon</label>
                                             </div>
                                             <div class="col-md-6">
-                                                <a href="{{ asset('uploads/'.$settings->favicon) }}" target="_blank">
-                                                    <img src="{{ asset('uploads/'.$settings->favicon) }}" alt="{{$settings->favicon}}" width="50">
+                                                <a href="{{ asset('storage/uploads/' . $settings->favicon) }}" target="_blank">
+                                                    <img src="{{ asset('storage/uploads/' . $settings->favicon) }}" alt="{{$settings->favicon}}" width="100">
                                                 </a>                    
                                             </div>
                                         </div>
@@ -228,8 +228,8 @@
                                                 <label for="authorized_signatory" class="form-label">Authorized Signatory</label>
                                             </div>
                                             <div class="col-md-6">
-                                                <a href="{{ asset('uploads/'.$settings->authorized_signatory) }}" target="_blank">
-                                                    <img src="{{ asset('uploads/'.$settings->authorized_signatory) }}" alt="{{$settings->authorized_signatory}}" width="50">
+                                                <a href="{{ asset('storage/uploads/' . $settings->authorized_signatory) }}" target="_blank">
+                                                    <img src="{{ asset('storage/uploads/' . $settings->authorized_signatory) }}" alt="{{$settings->authorized_signatory}}" width="100">
                                                 </a>                    
                                             </div>
                                         </div>

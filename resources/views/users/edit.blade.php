@@ -91,7 +91,7 @@
                                         <div class="col-md-4 mb-3">
                                             <label for="user_photo" class="form-label mb-2">Employee Image</label>
                                             @if($user->user_photo)
-                                            <a href="{{ asset($user->user_photo) }}" target="_blank" class="badge bg-secondary text-white text-decoration-none view-file" data-bs-toggle="modal" data-bs-target="#imageDownload" data-file="{{ asset($user->user_photo) }}">View File
+                                            <a href="{{ asset('storage/users/user_' . $user->id . '/' . $user->user_photo) }}" target="_blank" class="badge bg-secondary text-white text-decoration-none view-file" data-bs-toggle="modal" data-bs-target="#imageDownload" data-file="{{ asset('storage/users/user_' . $user->id . '/' . $user->user_photo) }}">View File</a>
                                             </a>                    
                                             @endif
                                             <input type="file" name="user_photo" id="user_photo" class="form-control" accept=".jpg, .jpeg, .png, .pdf">
@@ -100,16 +100,16 @@
                                         <div class="col-md-4 mb-3">
                                             <label for="user_photo_id" class="form-label mb-2">Employee Photo ID</label>
                                             @if($user->user_photo_id)
-                                            <a href="{{ asset($user->user_photo_id) }}" target="_blank" class="badge bg-secondary text-white text-decoration-none view-file" data-bs-toggle="modal" data-bs-target="#imageDownload" data-file="{{ asset($user->user_photo_id) }}">View File
+                                            <a href="{{ asset('storage/users/user_' . $user->id . '/' . $user->user_photo_id) }}" target="_blank" class="badge bg-secondary text-white text-decoration-none view-file" data-bs-toggle="modal" data-bs-target="#imageDownload" data-file="{{ asset('storage/users/user_' . $user->id . '/' . $user->user_photo_id) }}">View File</a>
                                             </a>                    
                                             @endif
                                             <input type="file" name="user_photo_id" id="user_photo_id" class="form-control" accept=".jpg, .jpeg, .png, .pdf">
                                             @error('user_photo_id')<div class="text-danger">{{ $message }}</div>@enderror
                                         </div>
                                         <div class="col-md-4 mb-3">
-                                            <label for="user_address_proof" class="form-label mb-2">Employee Address Proof</label>
+                                            <label for="user_address_proof" class="form-label mb-2">Employee Address Proof</label>  
                                             @if($user->user_address_proof)
-                                            <a href="{{ asset($user->user_address_proof) }}" target="_blank" class="badge bg-secondary text-white text-decoration-none view-file" data-bs-toggle="modal" data-bs-target="#imageDownload" data-file="{{ asset($user->user_address_proof) }}">View File</a>
+                                            <a href="{{ asset('storage/users/user_' . $user->id . '/' . $user->user_address_proof) }}" target="_blank" class="badge bg-secondary text-white text-decoration-none view-file" data-bs-toggle="modal" data-bs-target="#imageDownload" data-file="{{ asset('storage/users/user_' . $user->id . '/' . $user->user_address_proof) }}">View File</a>
                                             </a>                    
                                             @endif
                                             <input type="file" name="user_address_proof" id="user_address_proof" class="form-control" accept=".jpg, .jpeg, .png, .pdf">
@@ -158,7 +158,7 @@
                                             <div class="col-lg-6 mb-3">
                                                 <label for="insurance_policy_copy" class="form-label mb-2">Employee Insurance Policy Copy</label>
                                                 @if($user->insurance_policy_copy)
-                                                    <a href="{{ asset($user->insurance_policy_copy) }}" target="_blank" class="badge bg-secondary text-white text-decoration-none view-file" data-bs-toggle="modal" data-bs-target="#imageDownload" data-file="{{ asset($user->insurance_policy_copy) }}">View File</a>
+                                                    <a href="{{ asset('storage/users/user_' . $user->id . '/insurance/' . $user->insurance_policy_copy) }}" target="_blank" class="badge bg-secondary text-white text-decoration-none view-file" data-bs-toggle="modal" data-bs-target="#imageDownload" data-file="{{ asset('storage/users/user_' . $user->id . '/insurance/' . $user->insurance_policy_copy) }}">View File</a>
                                                 @endif
                                                 <input type="file" name="insurance_policy_copy" class="form-control" accept=".jpg, .jpeg, .png, .pdf">
                                                 @error('insurance_policy_copy')<div class="text-danger">{{ $message }}</div>@enderror
@@ -201,7 +201,7 @@
                                             <div class="col-lg-6 mb-3">
                                                 <label for="nominee_photo_id" class="form-label mb-2">Nominee Photo ID</label>
                                                 @if($user->nominee_photo_id)
-                                                    <a href="{{ asset($user->nominee_photo_id) }}" target="_blank" class="badge bg-secondary text-white text-decoration-none view-file" data-bs-toggle="modal" data-bs-target="#imageDownload" data-file="{{ asset($user->nominee_photo_id) }}">View File</a>
+                                                    <a href="{{ asset('storage/users/user_' . $user->id . '/nominee/' . $user->nominee_photo_id) }}" target="_blank" class="badge bg-secondary text-white text-decoration-none view-file" data-bs-toggle="modal" data-bs-target="#imageDownload" data-file="{{ asset('storage/users/user_' . $user->id . '/nominee/' . $user->nominee_photo_id) }}">View File</a>
                                                 @endif
                                                 <input type="file" name="nominee_photo_id" class="form-control" accept=".jpg, .jpeg, .png, .pdf">
                                                 @error('nominee_photo_id')<div class="text-danger">{{ $message }}</div>@enderror
@@ -209,7 +209,7 @@
                                             <div class="col-lg-6 mb-3">
                                                 <label for="nominee_address_proof" class="form-label mb-2">Nominee Address Proof</label>
                                                 @if($user->nominee_address_proof)
-                                                    <a href="{{ asset($user->nominee_address_proof) }}" target="_blank" class="badge bg-secondary text-white text-decoration-none view-file" data-bs-toggle="modal" data-bs-target="#imageDownload" data-file="{{ asset($user->nominee_address_proof) }}">View File</a>
+                                                    <a href="{{ asset('storage/users/user_' . $user->id . '/nominee/' . $user->nominee_address_proof) }}" target="_blank" class="badge bg-secondary text-white text-decoration-none view-file" data-bs-toggle="modal" data-bs-target="#imageDownload" data-file="{{ asset('storage/users/user_' . $user->id . '/nominee/' . $user->nominee_address_proof) }}">View File</a>
                                                 @endif
                                                 <input type="file" name="nominee_address_proof" class="form-control" accept=".jpg, .jpeg, .png, .pdf">
                                                 @error('nominee_address_proof')<div class="text-danger">{{ $message }}</div>@enderror
@@ -283,7 +283,7 @@
                                             <div class="col-lg-6 mb-3 licence {{ $user->user_type == 'driver' ? '' : 'd-none' }}" id="showDriverLicence">
                                                 <label for="licence" class="form-label mb-2">Licence</label>
                                                 @if($user->licence)
-                                                    <a href="{{ asset($user->licence) }}" target="_blank" class="badge bg-secondary text-white text-decoration-none view-file" data-bs-toggle="modal" data-bs-target="#imageDownload" data-file="{{ asset($user->licence) }}">View File</a>
+                                                    <a href="{{ asset('storage/users/user_' . $user->id . '/' . $user->licence) }}" target="_blank" class="badge bg-secondary text-white text-decoration-none view-file" data-bs-toggle="modal" data-bs-target="#imageDownload" data-file="{{ asset('storage/users/user_' . $user->id . '/' . $user->licence) }}">View File</a>
                                                 @endif
                                                 <input type="file" name="licence" class="form-control" accept=".jpg, .jpeg, .png, .pdf">
                                                 @error('licence')<div class="text-danger">{{ $message }}</div>@enderror
@@ -310,7 +310,7 @@
                                             <div class="col-lg-6 mb-3">
                                                 <label for="bank_proof" class="form-label mb-2">Employee Bank Proof</label>
                                                 @if($user->bank_proof)
-                                                    <a href="{{ asset($user->bank_proof) }}" target="_blank" class="badge bg-secondary text-white text-decoration-none view-file" data-bs-toggle="modal" data-bs-target="#imageDownload" data-file="{{ asset($user->bank_proof) }}">View File</a>
+                                                    <a href="{{ asset('storage/users/user_' . $user->id . '/bank/' . $user->bank_proof) }}" target="_blank" class="badge bg-secondary text-white text-decoration-none view-file" data-bs-toggle="modal" data-bs-target="#imageDownload" data-file="{{ asset('storage/users/user_' . $user->id . '/bank/' . $user->bank_proof) }}">View File</a>
                                                 @endif
                                                 <input type="file" name="bank_proof" class="form-control" accept=".jpg, .jpeg, .png, .pdf">
                                                 @error('bank_proof')<div class="text-danger">{{ $message }}</div>@enderror
@@ -345,7 +345,7 @@
                                                             <label>Case Details File</label><br>
                                                             @if(!empty($courtCase['case_files']))
                                                                 @foreach($courtCase['case_files'] as $file)
-                                                                    <a href="{{ asset($file) }}" target="_blank" class="badge bg-secondary text-white view-file" data-bs-toggle="modal" data-bs-target="#imageDownload" data-file="{{ asset($file) }}">View File</a>
+                                                                    <a href="{{ asset('storage/users/user_' . $user->id . '/court_case/' . $file) }}" target="_blank" class="badge bg-secondary text-white view-file" data-bs-toggle="modal" data-bs-target="#imageDownload" data-file="{{ asset('storage/users/user_' . $user->id . '/court_case/' . $file) }}">View File</a>
                                                                 @endforeach
                                                             @endif
                                                             <input type="file" name="court_case_files[{{ $caseIndex }}][]" class="form-control mt-2" {{ !empty($courtCase['case_files']) ? 'disabled' : '' }}>
@@ -354,7 +354,7 @@
                                                             <label>Case Close File</label><br>
                                                             @if(!empty($courtCase['case_close_files']))
                                                                 @foreach($courtCase['case_close_files'] as $closeFile)
-                                                                    <a href="{{ asset($closeFile) }}" target="_blank" class="badge bg-secondary text-white view-file" data-bs-toggle="modal" data-bs-target="#imageDownload" data-file="{{ asset($closeFile) }}">View File</a>
+                                                                    <a href="{{ asset('storage/users/user_' . $user->id . '/court_case_close/' . $closeFile) }}" target="_blank" class="badge bg-secondary text-white view-file" data-bs-toggle="modal" data-bs-target="#imageDownload" data-file="{{ asset('storage/users/user_' . $user->id . '/court_case_close/' . $closeFile) }}">View File</a>
                                                                 @endforeach
                                                             @endif
                                                             <input type="file" name="court_case_close_file[{{ $caseIndex }}][]" class="form-control mt-2" {{ !empty($courtCase['case_close_files']) ? 'disabled' : '' }}>

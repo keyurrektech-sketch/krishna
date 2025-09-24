@@ -8,7 +8,7 @@
 					<!-- Full logo (expanded sidebar) -->
 					<div class="logo-full">
 						@if(!empty($settings) && !empty($settings->logo))
-							<img src="{{ asset('uploads/'.$settings->logo) }}" alt="Logo" class="logo-icon" style="max-height:40px; width: 150px;">
+							<img src="{{ asset('storage/uploads/' . $settings->logo) }}" alt="Logo" class="logo-icon" style="max-height:40px; width: 150px;">
 						@else
 							<h4 class="logo-text">{{ $settings->name ?? '' }}</h4>
 						@endif
@@ -17,7 +17,7 @@
 					<!-- Small logo (collapsed sidebar) -->
 					<div class="logo-collapsed">
 						@if(!empty($settings) && !empty($settings->favicon))
-							<img src="{{ asset('uploads/'.$settings->favicon) }}" alt="Logo" class="logo-icon" style="max-height:40px; width: 40px;">
+							<img src="{{ asset('storage/uploads/' . $settings->favicon) }}" alt="Logo" class="logo-icon" style="max-height:40px; width: 40px;">
 						@else
 							<h4 class="logo-text">L</h4>
 						@endif
@@ -91,7 +91,7 @@
 					</div>
 					<div class="user-box dropdown px-3">
 						<a class="d-flex align-items-center nav-link dropdown-toggle gap-3 dropdown-toggle-nocaret" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-							<img src="{{ Auth::user()->user_photo ? asset(Auth::user()->user_photo ) : asset('uploads/user.png') }}" class="user-img" alt="user avatar">
+							<img src="{{ Auth::user()->user_photo ? asset('storage/users/user_' . Auth::user()->id . '/' . Auth::user()->user_photo) : asset('uploads/user.png') }}" class="user-img" alt="user avatar">
 							<div class="user-info">
 								<p class="user-name mb-0">{{ Auth::user()->name ?? ''}}</p>
 								<p class="designattion mb-0">{{ Auth::user()->email ?? ''}}</p>

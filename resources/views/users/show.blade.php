@@ -5,32 +5,42 @@
     <div class="wrapper">
         <div class="page-wrapper">
             <!-- [ Main Content ] start -->
-             @php
-                function renderFile($file) {
-                    if (!$file) {
-                        return '<label class="badge bg-danger text-white">No File</label>';
-                    }
-
-                    $extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-
-                    if (in_array($extension, ['jpg','jpeg','png'])) {
-                        return '<a href="javascript:void(0);" 
-                                    class="view-file" 
-                                    data-bs-toggle="modal" 
-                                    data-bs-target="#imageDownload" 
-                                    data-file="' . asset($file) . '">
-                                    <img src="' . asset($file) . '" class="img-thumbnail" style="max-width:100px;">
-                                </a>';
-                    } elseif ($extension === 'pdf') {
-                        return '<a href="javascript:void(0);" 
-                                    class="view-file" 
-                                    data-bs-toggle="modal" 
-                                    data-bs-target="#imageDownload" 
-                                    data-file="' . asset($file) . '"><img src="' . asset('uploads/PDF_file_icon.jpg') . '" class="img-thumbnail" style="max-width:50px;"></a>';
-                    } else {
-                        return '<label class="badge bg-warning text-dark">Unsupported File</label>';
-                    }
-                }
+            @php 
+                function renderFile($filePath) { 
+                    if (!$filePath) 
+                    { 
+                        return '<label class="badge bg-danger text-white">No File</label>'; 
+                    } 
+                    $extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION)); 
+                    $assetPath = asset($filePath);
+                    $pdfIcon = asset('storage/uploads/pdf.png');
+                    if (in_array($extension, ['jpg','jpeg','png'])) 
+                    { 
+                        return 
+                        '<a href="javascript:void(0);" 
+                            class="view-file" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#imageDownload" 
+                            data-file="' . $assetPath . '"> 
+                            <img src="' . $assetPath . '" alt="Image" class="img-fluid" width="100">
+                        </a>'; 
+                    } 
+                    elseif ($extension === 'pdf') 
+                    { 
+                        return 
+                        '<a href="javascript:void(0);" 
+                            class="view-file" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#imageDownload" 
+                            data-file="' . $assetPath . '">
+                            <img src="' . $pdfIcon . '" alt="" width="50">
+                        </a>'; 
+                    } 
+                    else 
+                    { 
+                        return '<label class="badge bg-danger text-white">No File</label>'; 
+                    } 
+                } 
             @endphp
 
             <div class="page-content">
@@ -77,19 +87,19 @@
                             <div class="row mb-4 d-flex align-items-center">
                                 <div class="col-lg-4 fw-medium">Employee Image</div>
                                 <div class="col-lg-8">
-                                    {!! renderFile($user->user_photo) !!}
+                                    {!! renderFile('storage/users/user_' . $user->id . '/' . $user->user_photo) !!}
                                 </div>
                             </div>
                             <div class="row mb-4 d-flex align-items-center">
                                 <div class="col-lg-4 fw-medium">Employee Photo ID</div>
                                 <div class="col-lg-8">
-                                    {!! renderFile($user->user_photo_id) !!}
+                                    {!! renderFile('storage/users/user_' . $user->id . '/' . $user->user_photo_id) !!}
                                 </div>
                             </div>
                             <div class="row mb-4 d-flex align-items-center">
                                 <div class="col-lg-4 fw-medium">Employee Address Proof</div>
                                 <div class="col-lg-8">
-                                    {!! renderFile($user->user_address_proof) !!}
+                                    {!! renderFile('storage/users/user_' . $user->id . '/' . $user->user_address_proof) !!}
                                 </div>
                             </div>
                             <div class="row mb-4">
@@ -105,7 +115,7 @@
                             <div class="row mb-4 d-flex align-items-center">
                                 <div class="col-lg-4 fw-medium">Employee Insurance Policy Copy</div>
                                 <div class="col-lg-8">
-                                    {!! renderFile($user->insurance_policy_copy) !!}
+                                    {!! renderFile('storage/users/user_' . $user->id . '/insurance/' . $user->insurance_policy_copy) !!}
                                 </div>
                             </div>
                             <div class="row mb-4">
@@ -129,13 +139,13 @@
                             <div class="row mb-4 d-flex align-items-center">
                                 <div class="col-lg-4 fw-medium">Nominee Photo ID</div>
                                 <div class="col-lg-8">
-                                    {!! renderFile($user->nominee_photo_id) !!}
+                                    {!! renderFile('storage/users/user_' . $user->id . '/nominee/' . $user->nominee_photo_id) !!}
                                 </div>
                             </div>
                             <div class="row mb-4 d-flex align-items-center">
                                 <div class="col-lg-4 fw-medium">Nominee Address Proof</div>
                                 <div class="col-lg-8">
-                                    {!! renderFile($user->nominee_address_proof) !!}
+                                    {!! renderFile('storage/users/user_' . $user->id . '/nominee/' . $user->nominee_address_proof) !!}
                                 </div>
                             </div>
                             <div class="row mb-4">
@@ -163,7 +173,7 @@
                             <div class="row mb-4">
                                 <div class="col-lg-4 fw-medium">Licence</div>
                                 <div class="col-lg-8">
-                                    {!! renderFile($user->licence) !!}
+                                    {!! renderFile('storage/users/user_' . $user->id . '/' . $user->licence) !!}
                                 </div>
                             </div>
                             <hr class="mt-0">
@@ -171,7 +181,7 @@
                             <div class="row mb-4 d-flex align-items-center">
                                 <div class="col-lg-4 fw-medium">Employee Bank Proof</div>
                                 <div class="col-lg-8">
-                                    {!! renderFile($user->bank_proof) !!}
+                                    {!! renderFile('storage/users/user_' . $user->id . '/bank/' . $user->bank_proof) !!}
                                 </div>
                             </div>
                             <hr class="mt-0">
@@ -199,7 +209,7 @@
                                                     <td>
                                                         @if(!empty($case['case_files']) && is_array($case['case_files']))
                                                             @foreach($case['case_files'] as $file)
-                                                                <div class="mb-1">{!! renderFile(asset($file)) !!}</div>
+                                                                <div class="mb-1">{!! renderFile('storage/users/user_' . $user->id . '/court_case/' . $file) !!}</div>
                                                             @endforeach
                                                         @else
                                                             <span class="text-muted">No files uploaded</span>
@@ -210,7 +220,7 @@
                                                     <td>
                                                         @if(!empty($case['case_close_files']) && is_array($case['case_close_files']))
                                                             @foreach($case['case_close_files'] as $file)
-                                                                <div class="mb-1">{!! renderFile(asset($file)) !!}</div>
+                                                                <div class="mb-1">{!! renderFile('storage/users/user_' . $user->id . '/court_case_close/' . $file) !!}</div>
                                                             @endforeach
                                                         @else
                                                             <span class="text-muted">No files uploaded</span>

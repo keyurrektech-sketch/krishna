@@ -15,6 +15,7 @@ use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -103,25 +104,21 @@ class UserController extends Controller
 
             // ============ COURT ============
             'court' => 'required|in:1,2',
-
-            // Parent array rule
             'court_case_files' => 'required_if:court,2|array',
-
-            // Each file rule
             'court_case_files.*' => 'file|mimes:pdf,jpg,png,jpeg',
-
             'court_case_close_file.*' => 'nullable|file|mimes:pdf,jpg,png,jpeg',
 
             // ============ NOTE ============
             'note' => 'nullable|string|max:1000',
-            
-            // Permissions (user-specific)
+
+            // Permissions
             'permissions' => 'nullable|array',
             'permissions.*' => 'exists:permissions,id',
-            
-            // Email validation
+
+            // Email
             'email' => 'nullable|email|unique:users,email',
-        ],[
+        ], [
+            // Custom messages...
             'username.required' => 'Employee name is required.',
             'birthdate.required' => 'Please provide a valid birthdate.',
             'contact_number_1.required' => 'Primary contact number is required.',
@@ -170,13 +167,12 @@ class UserController extends Controller
             $baseEmail = trim(str_replace(' ', '', strtolower($request->username))) . '@krishnaminerals.com';
             $email = $baseEmail;
             $counter = 1;
-            
-            // Check if email already exists and generate a unique one
+
             while (User::where('email', $email)->exists()) {
                 $email = trim(str_replace(' ', '', strtolower($request->username))) . $counter . '@krishnaminerals.com';
                 $counter++;
             }
-            
+
             $data['email'] = $email;
         }
 
@@ -188,64 +184,50 @@ class UserController extends Controller
         // -------------------- Create User --------------------
         $user = \App\Models\User::create($data);
 
-        // NOTE: We're not automatically assigning the role anymore to ensure
-        // permissions are based purely on user ID, not role inheritance
-        
-        // Assign direct permissions to user (bypassing roles)
+        // Assign direct permissions
         if ($request->has('permissions')) {
             $permissionIds = $request->input('permissions');
             $permissions = Permission::whereIn('id', $permissionIds)->get();
-            $user->syncPermissions($permissions); // This replaces all existing permissions for the user
+            $user->syncPermissions($permissions);
         }
 
         // -------------------- Prepare User Folder Structure --------------------
-        $userFolder = 'uploads/users/user_' . $user->id;
+        $userFolder = "users/user_{$user->id}";
+        $subFolders = ['bank', 'nominee', 'insurance', 'court_case', 'court_case_close'];
 
-        // Subfolders mapping
-        $subFolders = [
-            'bank',
-            'nominee',
-            'insurance',
-            'court_case',
-            'court_case_close',
-        ];
-
-        // Create main folder and subfolders
-        if (!file_exists($userFolder)) {
-            mkdir($userFolder, 0755, true);
-            foreach ($subFolders as $sub) {
-                mkdir("$userFolder/$sub", 0755, true);
+        foreach ($subFolders as $sub) {
+            if (!\Storage::disk('public')->exists("$userFolder/$sub")) {
+                \Storage::disk('public')->makeDirectory("$userFolder/$sub");
             }
         }
 
         // -------------------- File Upload Handling --------------------
-        // Map of files and their target subfolders
-        $fileMap = [
-            'user_photo' => '', // main folder
-            'user_photo_id' => '', // main folder
-            'user_address_proof' => '', // main folder
-            'insurance_policy_copy' => 'insurance',
-            'nominee_photo_id' => 'nominee',
-            'nominee_address_proof' => 'nominee',
-            'licence' => '', // main folder
-            'bank_proof' => 'bank',
-        ];
+$fileMap = [
+    'user_photo' => '', 
+    'user_photo_id' => '', 
+    'user_address_proof' => '', 
+    'insurance_policy_copy' => 'insurance',
+    'nominee_photo_id' => 'nominee',
+    'nominee_address_proof' => 'nominee',
+    'licence' => '', 
+    'bank_proof' => 'bank',
+];
 
-        $filePathsToUpdate = [];
+$filePathsToUpdate = [];
 
-        foreach ($fileMap as $file => $subFolder) {
-            if ($request->hasFile($file)) {
-                $filename = time() . '_' . uniqid() . '_' . $request->file($file)->getClientOriginalName();
-                $path = $subFolder ? "$userFolder/$subFolder" : $userFolder;
-                $request->file($file)->move($path, $filename);
-                $filePathsToUpdate[$file] = "$path/$filename";
-            }
-        }
+foreach ($fileMap as $file => $subFolder) {
+    if ($request->hasFile($file)) {
+        $filename = time() . '_' . uniqid() . '_' . $request->file($file)->getClientOriginalName();
+        $path = $subFolder ? "$userFolder/$subFolder" : $userFolder;
+        $request->file($file)->storeAs($path, $filename, 'public');
 
-        // Handle multiple court case files
-        $courtCases = []; // main array holding each court case
+        // Store only the filename in DB
+        $filePathsToUpdate[$file] = $filename;
+    }
+}
 
-        // Determine the maximum number of cases submitted
+        // -------------------- Handle Court Case Files --------------------
+        $courtCases = [];
         $maxCases = max(
             count($request->file('court_case_files') ?? []),
             count($request->file('court_case_close_file') ?? [])
@@ -255,50 +237,44 @@ class UserController extends Controller
             $caseFiles = [];
             $closeFiles = [];
 
-            // Handle case files
             if ($request->hasFile('court_case_files') && isset($request->file('court_case_files')[$i])) {
                 $files = $request->file('court_case_files')[$i];
-                // Make sure $files is an array (in case of multiple upload input)
                 if (!is_array($files)) $files = [$files];
 
                 foreach ($files as $file) {
                     $filename = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
-                    $file->move("$userFolder/court_case", $filename);
-                    $caseFiles[] = "$userFolder/court_case/$filename";
+                    $file->storeAs("$userFolder/court_case", $filename, 'public');
+
+                    // Store only filename
+                    $caseFiles[] = $filename;
                 }
             }
 
-            // Handle case close files
             if ($request->hasFile('court_case_close_file') && isset($request->file('court_case_close_file')[$i])) {
                 $files = $request->file('court_case_close_file')[$i];
                 if (!is_array($files)) $files = [$files];
 
                 foreach ($files as $file) {
                     $filename = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
-                    $file->move("$userFolder/court_case_close", $filename);
-                    $closeFiles[] = "$userFolder/court_case_close/$filename";
+                    $file->storeAs("$userFolder/court_case_close", $filename, 'public');
+
+                    // Store only filename
+                    $closeFiles[] = $filename;
                 }
             }
 
-            // Add this case to the main array
             $courtCases[] = [
                 'case_files' => $caseFiles,
                 'case_close_files' => $closeFiles
             ];
         }
 
-        // Store as single JSON column
         $filePathsToUpdate['court_case_files'] = json_encode($courtCases);
-
 
         $user->update($filePathsToUpdate);
 
-        // -------------------- Update User with File Paths --------------------
-        // $role = Role::find($request->input('user_type'));
-        // if ($role) {
-        //     $user->assignRole($role->name);
-        // }
 
+        // -------------------- Session for PDF --------------------
         session([
             'pdf_user_id' => $user->id,
             'pdf_plain_password' => $plainPassword,
@@ -308,8 +284,6 @@ class UserController extends Controller
             ->with('success', 'Employee created successfully.')
             ->with('auto_download_pdf', true);
     }
-
-
 
     public function show($id): View
     {
@@ -360,10 +334,8 @@ class UserController extends Controller
             'bank' => 'required|in:1,2',
             'court' => 'required|in:1,2',
             'note' => 'nullable|string|max:1000',
-            // Permissions (user-specific)
             'permissions' => 'nullable|array',
             'permissions.*' => 'exists:permissions,id',
-            // Email validation (only check uniqueness if it's being changed)
             'email' => 'nullable|email|unique:users,email,' . $id,
         ];
 
@@ -371,42 +343,28 @@ class UserController extends Controller
             $rules['bank_proof'] = 'required|file|mimes:pdf,jpg,png,jpeg';
         }
 
-        // Dynamic conditional rules for insurance
         if ($request->input('insurance') == 2) {
             $rules['insurance_name'] = 'required|string|max:255';
-            
-            if (empty($user->insurance_policy_copy) && !$request->hasFile('insurance_policy_copy')) {
-                $rules['insurance_policy_copy'] = 'required|file|mimes:pdf,jpg,png,jpeg';
-            } else {
-                $rules['insurance_policy_copy'] = 'nullable|file|mimes:pdf,jpg,png,jpeg';
-            }
+            $rules['insurance_policy_copy'] = empty($user->insurance_policy_copy) && !$request->hasFile('insurance_policy_copy') 
+                ? 'required|file|mimes:pdf,jpg,png,jpeg'
+                : 'nullable|file|mimes:pdf,jpg,png,jpeg';
             $rules['insurance_issue_date'] = 'required|date';
             $rules['insurance_valid_date'] = 'required|date';
 
             $rules['nominee_name'] = 'required|string|max:255';
             $rules['nominee_mobile_number'] = 'required|string|min:10|max:10|regex:/^[0-9+\-\s]+$/';
-            if (empty($user->nominee_photo_id) && !$request->hasFile('nominee_photo_id')) {
-                $rules['nominee_photo_id'] = 'required|file|mimes:jpg,png,jpeg,pdf'; 
-            } else {
-                $rules['nominee_photo_id'] = 'nullable|file|mimes:jpg,png,jpeg,pdf'; 
-            }
-
-            if (empty($user->nominee_address_proof) && !$request->hasFile('nominee_address_proof')) {
-                $rules['nominee_address_proof'] = 'required|file|mimes:jpg,png,jpeg,pdf';
-            } else {
-                $rules['nominee_address_proof'] = 'nullable|file|mimes:jpg,png,jpeg,pdf';
-            }
-
+            $rules['nominee_photo_id'] = empty($user->nominee_photo_id) && !$request->hasFile('nominee_photo_id') 
+                ? 'required|file|mimes:jpg,png,jpeg,pdf' 
+                : 'nullable|file|mimes:jpg,png,jpeg,pdf';
+            $rules['nominee_address_proof'] = empty($user->nominee_address_proof) && !$request->hasFile('nominee_address_proof') 
+                ? 'required|file|mimes:jpg,png,jpeg,pdf' 
+                : 'nullable|file|mimes:jpg,png,jpeg,pdf';
             $rules['nominee_gender'] = 'required|in:1,2';
             $rules['nominee_birthdate'] = 'required|date|before_or_equal:' . now()->subYears(18)->format('Y-m-d');
         }
 
         $courtCases = json_decode($user->court_case_files ?? '[]', true);
-
-        // Only apply validation if court == 2
         if ($request->input('court') == 2) {
-
-            // Check if there are any existing case files
             $hasExistingFiles = false;
             if (is_array($courtCases) && count($courtCases) > 0) {
                 foreach ($courtCases as $case) {
@@ -416,48 +374,23 @@ class UserController extends Controller
                     }
                 }
             }
-
-            // Validation rules
             if (!$hasExistingFiles && !$request->hasFile('court_case_files')) {
-                // No existing files, new upload is required
                 $rules['court_case_files'] = 'required|array';
                 $rules['court_case_files.*.*'] = 'file|mimes:pdf,jpg,png,jpeg';
             } else {
-                // Existing files present, new upload is optional
                 $rules['court_case_files.*.*'] = 'nullable|file|mimes:pdf,jpg,png,jpeg';
             }
-
-            // Close files are always optional
             $rules['court_case_close_file.*.*'] = 'nullable|file|mimes:pdf,jpg,png,jpeg';
         }
 
-
-        // -------------------- Validate --------------------
-        $validatedData = $request->validate($rules, [
-            'username.required' => 'Employee name is required.',
-            'birthdate.required' => 'Please provide a valid birthdate.',
-            'contact_number_1.regex' => 'Contact number format is invalid.',
-            'contact_number_2.regex' => 'Alternate contact number format is invalid.',
-            'user_type.required' => 'Please select a employee designation.',
-            'user_type.exists' => 'Selected employee designation is invalid.',
-            'department.required' => 'Department is required.',
-            'salary.numeric' => 'Salary must be a valid number.',
-            'licence.mimes' => 'License must be a file of type: pdf, jpg, png, jpeg.',
-            'bank_proof.mimes' => 'Bank proof must be a file of type: pdf, jpg, png, jpeg.',
-            'court_case_files.*.mimes' => 'Each court file must be a valid file (pdf, jpg, png, jpeg).',
-            'court_case_close_file.*.mimes' => 'Each court close file must be a valid file (pdf, jpg, png, jpeg).',
-            'note.max' => 'Note cannot exceed 1000 characters.',
-            'email.unique' => 'This email address is already in use. Please provide a different email address.',
-        ]);
+        $validatedData = $request->validate($rules);
 
         // -------------------- Create user folder if needed --------------------
-        $userFolder = 'uploads/users/user_' . $user->id;
+        $userFolder = "users/user_{$user->id}";
         $subFolders = ['bank', 'nominee', 'insurance', 'court_case', 'court_case_close'];
-
-        if (!file_exists($userFolder)) {
-            mkdir($userFolder, 0755, true);
-            foreach ($subFolders as $sub) {
-                mkdir("$userFolder/$sub", 0755, true);
+        foreach ($subFolders as $sub) {
+            if (!\Storage::disk('public')->exists("$userFolder/$sub")) {
+                \Storage::disk('public')->makeDirectory("$userFolder/$sub");
             }
         }
 
@@ -467,26 +400,25 @@ class UserController extends Controller
             'nominee_photo_id', 'nominee_address_proof', 'licence', 'bank_proof',
             'court_case_files', 'court_case_close_file'
         ]);
-
         $data['name'] = $request->username;
         if (empty($data['email'])) {
             $data['email'] = trim(str_replace(' ', '', strtolower($request->username))) . '@krishnaminerals.com';
         }
 
-        // -------------------- Upload Main Files --------------------
+        // -------------------- Upload Main Files (store only filename) --------------------
         $mainFolderFiles = ['user_photo', 'user_photo_id'];
         foreach ($mainFolderFiles as $file) {
             if ($request->hasFile($file)) {
-                if (!empty($user->$file) && file_exists($user->$file)) {
-                    unlink($user->$file);
+                if (!empty($user->$file) && \Storage::disk('public')->exists("$userFolder/$user->$file")) {
+                    \Storage::disk('public')->delete("$userFolder/$user->$file");
                 }
                 $filename = time() . '_' . uniqid() . '_' . $request->file($file)->getClientOriginalName();
-                $request->file($file)->move($userFolder, $filename);
-                $data[$file] = "$userFolder/$filename";
+                $request->file($file)->storeAs($userFolder, $filename, 'public');
+                $data[$file] = $filename;
             }
         }
 
-        // -------------------- Upload Subfolder Files --------------------
+        // -------------------- Upload Subfolder Files (store only filename) --------------------
         $fileMap = [
             'user_address_proof' => '',
             'insurance_policy_copy' => 'insurance',
@@ -498,41 +430,37 @@ class UserController extends Controller
 
         foreach ($fileMap as $file => $subFolder) {
             if ($request->hasFile($file)) {
-                if (!empty($user->$file) && file_exists($user->$file)) {
-                    unlink($user->$file);
+                if (!empty($user->$file) && \Storage::disk('public')->exists("$userFolder/$subFolder/$user->$file")) {
+                    \Storage::disk('public')->delete("$userFolder/$subFolder/$user->$file");
                 }
                 $filename = time() . '_' . uniqid() . '_' . $request->file($file)->getClientOriginalName();
                 $path = $subFolder ? "$userFolder/$subFolder" : $userFolder;
-                $request->file($file)->move($path, $filename);
-                $data[$file] = "$path/$filename";
+                $request->file($file)->storeAs($path, $filename, 'public');
+                $data[$file] = $filename;
             }
         }
 
-        // -------------------- Handle Court Case Files --------------------
-        // Decode existing court cases
+        // -------------------- Handle Court Case Files (store only filenames) --------------------
         $courtCases = json_decode($user->court_case_files ?? '[]', true);
         if (!is_array($courtCases)) $courtCases = [];
 
-        // Get uploaded files arrays
         $newCourtFiles = $request->file('court_case_files') ?? [];
         $newCourtCloseFiles = $request->file('court_case_close_file') ?? [];
 
-        // Helper function to move uploaded files
         function moveUploadedFiles($files, $folder, $userFolder) {
             $paths = [];
-            if (!$files) return $paths; // handle null
+            if (!$files) return $paths;
             if (!is_array($files)) $files = [$files];
             foreach ($files as $file) {
                 if ($file && $file->isValid()) {
                     $filename = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
-                    $file->move("$userFolder/$folder", $filename);
-                    $paths[] = "$userFolder/$folder/$filename";
+                    $file->storeAs("$userFolder/$folder", $filename, 'public');
+                    $paths[] = $filename;
                 }
             }
             return $paths;
         }
 
-        // Collect all possible indexes (existing + new)
         $allIndexes = array_unique(array_merge(
             array_keys($courtCases),
             array_keys($newCourtFiles),
@@ -541,38 +469,25 @@ class UserController extends Controller
         sort($allIndexes);
 
         foreach ($allIndexes as $index) {
-            // Move uploaded files (handles null or single files)
             $caseFiles = moveUploadedFiles($newCourtFiles[$index] ?? [], 'court_case', $userFolder);
             $closeFiles = moveUploadedFiles($newCourtCloseFiles[$index] ?? [], 'court_case_close', $userFolder);
 
             if (isset($courtCases[$index])) {
-                // Merge with existing files
                 $courtCases[$index]['case_files'] = array_merge($courtCases[$index]['case_files'] ?? [], $caseFiles);
                 $courtCases[$index]['case_close_files'] = array_merge($courtCases[$index]['case_close_files'] ?? [], $closeFiles);
             } elseif (!empty($caseFiles) || !empty($closeFiles)) {
-                // Add as new case
                 $courtCases[$index] = [
                     'case_files' => $caseFiles,
                     'case_close_files' => $closeFiles,
                 ];
             }
         }
-
-        // Reindex sequentially and save
         $data['court_case_files'] = json_encode(array_values($courtCases));
 
-        // -------------------- Update Role --------------------
-        // NOTE: We're not automatically assigning the role anymore to ensure
-        // permissions are based purely on user ID, not role inheritance
-        // $role = Role::find($request->input('user_type'));
-        // if ($role) {
-        //     $user->syncRoles([$role->name]); // Replace previous role
-        // }
-
-        // Sync direct permissions (user-specific, bypassing roles)
+        // -------------------- Sync Permissions --------------------
         $permissionIds = $request->input('permissions', []);
         $permissions = Permission::whereIn('id', $permissionIds)->get();
-        $user->syncPermissions($permissions); // This replaces all existing permissions for the user
+        $user->syncPermissions($permissions);
 
         // -------------------- Update User --------------------
         $user->update($data);
@@ -585,11 +500,11 @@ class UserController extends Controller
         $user = \App\Models\User::findOrFail($id);
 
         // -------------------- Delete user files --------------------
-        $userFolder = 'uploads/users/user_' . $user->id;
+        $userFolder = "users/user_{$user->id}";
 
-        if (file_exists($userFolder)) {
-            // Recursive delete function
-            $this->deleteFolder($userFolder);
+        if (\Storage::disk('public')->exists($userFolder)) {
+            // Recursive delete
+            \Storage::disk('public')->deleteDirectory($userFolder);
         }
 
         // -------------------- Delete user from database --------------------
@@ -598,24 +513,28 @@ class UserController extends Controller
         return redirect()->route('users.index')->with('success', 'Employee deleted successfully.');
     }
 
+
     /**
      * Recursive folder delete
      */
     private function deleteFolder($folder)
     {
+        if (!file_exists($folder)) return;
+
         $files = array_diff(scandir($folder), ['.', '..']);
 
         foreach ($files as $file) {
-            $path = "$folder/$file";
+            $path = $folder . '/' . $file;
             if (is_dir($path)) {
                 $this->deleteFolder($path);
             } else {
-                unlink($path);
+                @unlink($path); // @ to suppress errors if file doesn't exist
             }
         }
 
-        rmdir($folder);
+        @rmdir($folder); // Remove the folder itself
     }
+
 
     public function streamPdf(User $user)
     {
