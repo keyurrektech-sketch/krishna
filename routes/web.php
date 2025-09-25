@@ -9,6 +9,8 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\SalesController;
 use App\Http\Controllers\VehicleController;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Http\Controllers\MaterialsController;
+use App\Http\Controllers\PlacesController;
 
 // Redirect root URL to /home if logged in, or to login otherwise
 Route::get('/', function () {
@@ -24,17 +26,23 @@ Auth::routes();
 // Home page after login
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-Route::post('/register', [UserController::class, 'register'])->name('users.register');
+Route::post('/register', [SalesController::class, 'register'])->name('users.register');
 
 // Protected routes (only accessible when logged in)
 Route::middleware(['auth'])->group(function () {
 
     Route::get('/users/editindex', [UserController::class, 'editIndex'])->name('users.editIndex');
+    Route::get('/sales/editindex', [SalesController::class, 'editIndex'])->name('sales.editIndex');
+    Route::get('/materials/editindex', [MaterialsController::class, 'editIndex'])->name('materials.editIndex');
+    Route::get('/places/editindex', [PlacesController::class, 'editIndex'])->name('places.editIndex');
+    Route::get('/vehicles/editindex', [VehicleController::class, 'editIndex'])->name('vehicles.editIndex');
 
     Route::resource('roles', RoleController::class);
     Route::resource('users', UserController::class);
     Route::resource('sales', SalesController::class);
     Route::resource('vehicle', VehicleController::class);
+    Route::resource('materials', MaterialsController::class);
+    Route::resource('places', PlacesController::class);
 
     Route::post('/vehicle/fetch-details', [VehicleController::class, 'fetchDetails'])->name('vehicle.details');
 

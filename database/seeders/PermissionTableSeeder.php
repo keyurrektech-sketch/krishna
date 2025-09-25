@@ -17,6 +17,18 @@ class PermissionTableSeeder extends Seeder
             'view-employees',
             'add-employee',
             'edit-employees',
+            'view-sales',
+            'add-sale',
+            'edit-sales',
+            'view-materials',
+            'add-material',
+            'edit-materials',
+            'view-places',
+            'add-place',
+            'edit-places',
+            'view-vehicles',
+            'add-vehicle',
+            'edit-vehicles',
         ];
 
         foreach ($permissions as $permission) {

@@ -7,30 +7,44 @@
             <div class="page-content">
                 <div class="row">
                     <div class="row mb-3">
+                        @php
+                        $i = ($places->currentPage() - 1) * $places->perPage();
+                        @endphp
                         <!-- [Leads] start -->
                         <div class="col-xxl-12">
                             @session('success')
                                 <div class="alert alert-success" role="alert"> 
-                                    {{ $value }}
+                                    {{ session('success') }}
                                 </div>
                             @endsession
                             <div class="card stretch stretch-full">
-                                <div class="card-header">
-                                    <h5 class="card-title">Sales</h5>
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h5 class="card-title">Places Edit</h5>
                                 </div>
-                                <div class="card-body custom-card-action p-0">
+                                <div class="card-body">
                                     <div class="table-responsive">
-                                        <table class="table table-hover mb-0">
+                                        <table id="example" class="table table-striped table-bordered" style="width:100%">
                                             <thead>
                                                 <tr class="border-b">
                                                     <th>No</th>
                                                     <th>Name</th>
-                                                    <th>Emails</th>
-                                                    <th>Roles</th>
+                                                    <th>Updated AT</th>
                                                     <th>Actions</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                @foreach($places as $place)
+                                                    @if($place)
+                                                        <tr>
+                                                            <td>{{ ++$i }}</td>
+                                                            <td>{{ $place->name ?? '' }}</td>
+                                                            <td>{{ $place->updated_at->timezone('Asia/Kolkata')->format('d-m-Y h:i A') }}</td>
+                                                            <td>
+                                                                <a href="{{ route('places.edit', $place->id) }}" class="btn btn-primary btn-sm">Edit</a>
+                                                            </td>
+                                                        </tr>
+                                                    @endif
+                                                @endforeach
                                             </tbody>
                                         </table>
                                     </div>
@@ -38,6 +52,7 @@
                             </div>
                             <div class="card-footer">
                                 <div class="d-flex justify-content-start">
+                                    {!! $places->links() !!}
                                 </div>
                             </div>
                         </div>
@@ -47,5 +62,4 @@
             </div>
         </div>
     </div>
-    
 @endsection

@@ -7,6 +7,9 @@
             <div class="page-content">
                 <div class="row">
                     <div class="row mb-3">
+                        @php
+                            $i = ($places->currentPage() - 1) * $places->perPage();
+                        @endphp
                         <!-- [Leads] start -->
                         <div class="col-xxl-12">
                             @session('success')
@@ -16,21 +19,32 @@
                             @endsession
                             <div class="card stretch stretch-full">
                                 <div class="card-header">
-                                    <h5 class="card-title">Sales</h5>
-                                </div>
-                                <div class="card-body custom-card-action p-0">
+                                    <h5 class="card-title">Places</h5>
+                                </div>  
+                                <div class="card-body">
                                     <div class="table-responsive">
-                                        <table class="table table-hover mb-0">
+                                        <table id="example" class="table table-striped table-bordered" style="width:100%">
                                             <thead>
                                                 <tr class="border-b">
                                                     <th>No</th>
                                                     <th>Name</th>
-                                                    <th>Emails</th>
-                                                    <th>Roles</th>
+                                                    <th>Created AT</th>
                                                     <th>Actions</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                @foreach ($places as $key => $place)
+                                                    <tr>
+                                                        <td>{{ ++$i }}</td>
+                                                        <td>{{ $place->name }}</td>
+                                                        <td>{{ $place->created_at->timezone('Asia/Kolkata')->format('d-m-Y h:i A') }}</td>
+                                                        <td class="d-flex">
+                                                            <a class="btn btn-info btn-sm me-2" href="{{ route('places.show',$place->id) }}">
+                                                                <i class="lni lni-eye text-white"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
                                             </tbody>
                                         </table>
                                     </div>

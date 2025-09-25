@@ -24,12 +24,12 @@
                                 </div>
                             @endsession
                             <div class="card stretch stretch-full">
-                                <div class="card-header">
-                                    <h5 class="card-title">SALES</h5>
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h5 class="card-title">Sales</h5>
                                     <div class="card-header-action">
                                         <div class="card-header-btn">         
                                             <a class="btn btn-sm btn-primary" href="{{ route('sales.index') }}">
-                                                <i class="fa fa-arrow-left"></i>
+                                                <i class="bx bx-arrow-to-left"></i>
                                             </a>
                                         </div>
                                     </div>
@@ -40,46 +40,46 @@
                                     <div class="card-body general-info">
                                         <div class="row align-items-center d-flex justify-content-between">
                                             <div class="col-lg-4 mb-4">
-                                                <label for="challan_number" class="fw-semibold mb-2">CHALLAN NUMBER </label>
+                                                <label for="challan_number" class="form-label mb-2">Challan Number </label>
                                                 <div class="input-group">
                                                     <div class="input-group-text">S_</div>
-                                                    <input type="text" name="id" placeholder="CHALLAN NUMBER" class="form-control"  id="challan_number"  value="{{ old('id', $sales->id == '' ? 0+1 : $sales->id+1) }}">
+                                                    <input type="text" name="id" placeholder="Challan Number" class="form-control"  id="challan_number"  value="{{ old('id', $sales->id == '' ? 0+1 : $sales->id+1) }}" readonly>
                                                     @error('id')<div class="text-danger">{{ $message }}</div>@enderror
                                                 </div>
                                             </div>
                                             <div class="col-lg-4 mb-4">
-                                                <label for="date" class="fw-semibold mb-2">DATE</label>
+                                                <label for="date" class="form-label mb-2">Date</label>
                                                 <div class="input-group">
-                                                    <input type="datetime-local" name="date" class="form-control"  id="date"  value="{{ old('date') }}">
+                                                    <input type="datetime-local" name="date" class="form-control"  id="date"  value="{{ old('date') }}" readonly>
                                                     @error('date')<div class="text-danger">{{ $message }}</div>@enderror
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row align-items-center">
                                             <div class="col-lg-4 mb-4">
-                                                <label for="mailInput" class="fw-semibold mb-2 ">VEHICLE NUMBER </label>
+                                                <label for="mailInput" class="form-label mb-2">Vehicle Number </label>
                                                 <div class="input-group">
                                                     <select class="form-select" aria-label="Default select example" id="vehicle_id" name="vehicle_id"  data-url="{{ route('vehicle.details') }}">
-                                                        <option selected disabled value>SELECT VEHICLE</option>
+                                                        <option selected disabled value>Select Vehicle</option>
                                                         @foreach($vehicles as $vehicle)
                                                             <option value="{{ $vehicle->id ?? '' }}">{{ $vehicle->name ?? '' }}</option>
                                                         @endforeach
                                                     </select>                                                
                                                 </div>
-                                                @error('email')<div class="text-danger">{{ $message }}</div>@enderror
+                                                @error('vehicle_id')<div class="text-danger">{{ $message }}</div>@enderror
                                             </div>
                                             <div class="col-lg-4 mb-4">
-                                                <label for="transporter" class="fw-semibold mb-2">TRANSPORTER</label>
+                                                <label for="transporter" class="form-label mb-2">Transporter Name</label>
                                                 <div class="input-group">   
-                                                    <input type="text" name="transporter" placeholder="TRANSPORTER NAME" class="form-control"  id="transporter"  value="{{ old('transporter') }}" readonly>
+                                                    <input type="text" name="transporter" placeholder="Transporter Name" class="form-control"  id="transporter"  value="{{ old('transporter') }}" readonly>
                                                 </div>
-                                                @error('contact_number')<div class="text-danger">{{ $message }}</div>@enderror
+                                                @error('transporter')<div class="text-danger">{{ $message }}</div>@enderror
                                             </div>  
                                             <div class="col-lg-4 mb-4">
-                                                <label for="tare_weight" class="fw-semibold mb-2">TARE WEIGHT </label>
+                                                <label for="contact_number" class="form-label mb-2">Contact Number</label>
                                                 <div class="input-group">
-                                                    <input type="text" name="tare_weight" placeholder="ENTER VEHICLE TARE WEIGHT" class="form-control" id="tare_weight" value="{{ old('tare_weight') }}">
-                                                    @error('tare_weight')<div class="text-danger">{{ $message }}</div>@enderror
+                                                    <input type="number" name="contact_number" maxlength="10" minlength="10"  placeholder="Enter Transporter Contact Number" class="form-control" id="contact_number" value="{{ old('contact_number') }}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);">
+                                                    @error('contact_number')<div class="text-danger">{{ $message }}</div>@enderror
                                                 </div>
                                             </div>
                                         </div>
@@ -102,11 +102,11 @@
                 <!-- [ Main Content ] end -->
             </div>
         </div>
-        <div class="modal fade" id="shortcutModal" tabindex="-1" aria-labelledby="shortcutModalLabel" aria-hidden="true">
+        <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="shortcutModalLabel">VEHICLE</h5>
+                        <h5 class="modal-title" id="shortcutModalLabel">Vehicle</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -114,29 +114,29 @@
                         @csrf
                             <div class="row align-items-center d-flex justify-content-between">
                                 <div class="col-lg-12 mb-4">
-                                    <label for="name" class="fw-semibold mb-2">VEHICLE NUMBER</label>
+                                    <label for="name" class="form-label mb-2">Vehicle Number</label>
                                     <div class="input-group">
-                                        <input type="text" name="name" placeholder="ENTER VEHICLE NUMBER" class="form-control"  id="name"  value="{{ old('name') }}">
+                                        <input type="text" name="name" placeholder="Enter Vehicle Number" class="form-control"  id="name"  value="{{ old('name') }}">
                                     </div>
                                     @error('name')<div class="text-danger">{{ $message }}</div>@enderror
                                 </div>
                             </div>
                             <div class="row align-items-center">
                                 <div class="col-lg-12 mb-4">
-                                    <label for="vehicle_name" class="fw-semibold mb-2">TRANSPORTER NAME</label>
+                                    <label for="vehicle_name" class="form-label mb-2">Transporter Name</label>
                                     <div class="input-group">
-                                        <input type="text" name="vehicle_name" placeholder="ENTER TRANSPORTER NAME" class="form-control"  id="vehicle_name"  value="{{ old('vehicle_name') }}">
+                                        <input type="text" name="vehicle_name" placeholder="Enter Transporter Name" class="form-control"  id="vehicle_name"  value="{{ old('vehicle_name') }}">
                                     </div>
                                     @error('vehicle_name')<div class="text-danger">{{ $message }}</div>@enderror
                                 </div>  
                             </div>
                             <div class="row align-items-center">  
                                 <div class="col-lg-12 mb-4">
-                                    <label for="vehicle_tare_weight" class="fw-semibold mb-2">TARE WEIGHT </label>
+                                    <label for="transporter_contact_number" class="form-label mb-2">Transporter Contact Number </label>
                                     <div class="input-group">
-                                        <input type="text" name="vehicle_tare_weight" placeholder="ENTER TARE WEIGHT" class="form-control" id="vehicle_tare_weight" value="{{ old('vehicle_tare_weight') }}">
+                                        <input type="number" name="contact_number" placeholder="Enter Transporter Contact Number" class="form-control" id="transporter_contact_number" value="{{ old('transporter_contact_number') }}">
                                     </div>
-                                    @error('vehicle_tare_weight')<div class="text-danger">{{ $message }}</div>@enderror
+                                    @error('contact_number')<div class="text-danger">{{ $message }}</div>@enderror
                                 </div>
                             </div>
                             <div class="row justify-content-between">
@@ -197,16 +197,16 @@
             $('#vehicle_id').change(function() {
                 const selectedValue = $(this).val();
                 const url = $(this).data('url');
-            
+
                 if (selectedValue) {
                     $.ajax({
                         url: url,
                         type: 'POST',
-                        data: { id: selectedValue },
+                        data: { id: selectedValue }, // no need to add _token manually
                         dataType: 'json',
                         success: function(data){
                             $('#transporter').val(data.vehicle_name);
-                            $('#tare_weight').val(data.vehicle_tare_weight);
+                            $('#contact_number').val(data.contact_number);
                         },
                         error: function(xhr) {
                             console.log("Error:", xhr.responseText);
@@ -214,7 +214,7 @@
                     });
                 }
             });
-        })
+        });
         
         $(document).ready(function(){
             const dateTimeInput = document.getElementById('date');
@@ -226,30 +226,18 @@
             
             dateTimeInput.value = now.toISOString().slice(0, 16);
         })
-
+        
         $(document).ready(function(){
-            let dropdownActive = false;
-
-            document.getElementById('vehicle_id').addEventListener('click', function() {
-                dropdownActive = true;
+            const dropdown = document.getElementById('vehicle_id');
+            const myModal = new bootstrap.Modal(document.getElementById('myModal'));
+            
+            dropdown.addEventListener('keyup', function(e) {
+            if (e.key === 'Insert' || (e.key.toLowerCase() === 'i' && e.ctrlKey)) {
+                e.preventDefault();
+                setTimeout(() => myModal.show(), 10);
+            }
             });
-
-            // listen for shortcuts
-            document.addEventListener("keydown", function(event) {
-                if (!dropdownActive) return;
-
-                if (event.ctrlKey && event.key.toLowerCase() === "i") {
-                    event.preventDefault();
-                    new bootstrap.Modal(document.getElementById('shortcutModal')).show();
-                }
-
-                if (event.key === "Insert") {
-                    event.preventDefault();
-                    new bootstrap.Modal(document.getElementById('shortcutModal')).show();
-                }
-            });            
         })
-
-
     </script>
+    
 @endpush

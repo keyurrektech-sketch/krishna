@@ -46,9 +46,7 @@
                                                     <td>{{ $vehicle->vehicle_name }}</td>
                                                     <td>{{ $vehicle->contact_number }}</td>
                                                     <td class="d-flex">
-                                                        <a class="btn btn-info btn-sm me-2" href="{{ route('vehicle.show',$vehicle->id) }}">
-                                                            <i class="lni lni-eye text-white"></i>
-                                                        </a>
+                                                        <a href="{{ route('vehicle.edit', $vehicle->id) }}" class="btn btn-primary btn-sm">Edit</a>
                                                     </td>
                                                 </tr>
                                             @endforeach

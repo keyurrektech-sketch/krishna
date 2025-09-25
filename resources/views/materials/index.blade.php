@@ -7,6 +7,9 @@
             <div class="page-content">
                 <div class="row">
                     <div class="row mb-3">
+                        @php
+                            $i = ($data->currentPage() - 1) * $data->perPage();
+                        @endphp
                         <!-- [Leads] start -->
                         <div class="col-xxl-12">
                             @session('success')
@@ -17,20 +20,31 @@
                             <div class="card stretch stretch-full">
                                 <div class="card-header">
                                     <h5 class="card-title">Sales</h5>
-                                </div>
-                                <div class="card-body custom-card-action p-0">
+                                </div>  
+                                <div class="card-body">
                                     <div class="table-responsive">
-                                        <table class="table table-hover mb-0">
+                                        <table id="example" class="table table-striped table-bordered" style="width:100%">
                                             <thead>
                                                 <tr class="border-b">
                                                     <th>No</th>
                                                     <th>Name</th>
-                                                    <th>Emails</th>
-                                                    <th>Roles</th>
+                                                    <th>Created AT</th>
                                                     <th>Actions</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                @foreach ($data as $key => $material)
+                                                    <tr>
+                                                        <td>{{ ++$i }}</td>
+                                                        <td>{{ $material->name }}</td>
+                                                        <td>{{ $material->created_at->timezone('Asia/Kolkata')->format('d-m-Y h:i A') }}</td>
+                                                        <td class="d-flex">
+                                                            <a class="btn btn-info btn-sm me-2" href="{{ route('materials.show',$material->id) }}">
+                                                                <i class="lni lni-eye text-white"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
                                             </tbody>
                                         </table>
                                     </div>

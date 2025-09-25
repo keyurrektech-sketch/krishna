@@ -202,29 +202,29 @@ class UserController extends Controller
         }
 
         // -------------------- File Upload Handling --------------------
-$fileMap = [
-    'user_photo' => '', 
-    'user_photo_id' => '', 
-    'user_address_proof' => '', 
-    'insurance_policy_copy' => 'insurance',
-    'nominee_photo_id' => 'nominee',
-    'nominee_address_proof' => 'nominee',
-    'licence' => '', 
-    'bank_proof' => 'bank',
-];
+        $fileMap = [
+            'user_photo' => '', 
+            'user_photo_id' => '', 
+            'user_address_proof' => '', 
+            'insurance_policy_copy' => 'insurance',
+            'nominee_photo_id' => 'nominee',
+            'nominee_address_proof' => 'nominee',
+            'licence' => '', 
+            'bank_proof' => 'bank',
+        ];
 
-$filePathsToUpdate = [];
+        $filePathsToUpdate = [];
 
-foreach ($fileMap as $file => $subFolder) {
-    if ($request->hasFile($file)) {
-        $filename = time() . '_' . uniqid() . '_' . $request->file($file)->getClientOriginalName();
-        $path = $subFolder ? "$userFolder/$subFolder" : $userFolder;
-        $request->file($file)->storeAs($path, $filename, 'public');
+        foreach ($fileMap as $file => $subFolder) {
+            if ($request->hasFile($file)) {
+                $filename = time() . '_' . uniqid() . '_' . $request->file($file)->getClientOriginalName();
+                $path = $subFolder ? "$userFolder/$subFolder" : $userFolder;
+                $request->file($file)->storeAs($path, $filename, 'public');
 
-        // Store only the filename in DB
-        $filePathsToUpdate[$file] = $filename;
-    }
-}
+                // Store only the filename in DB
+                $filePathsToUpdate[$file] = $filename;
+            }
+        }
 
         // -------------------- Handle Court Case Files --------------------
         $courtCases = [];

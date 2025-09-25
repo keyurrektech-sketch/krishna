@@ -21,6 +21,13 @@ class VehicleController extends Controller
             ->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
+    public function editIndex(Request $request)
+    {
+        $vehicles = Vehicle::latest()->paginate(5);
+        return view('vehicle.edit-index' , compact('vehicles'))
+            ->with('i', ($request->input('page', 1) - 1) * 5);
+    }
+
     public function create()
     {
         return view('vehicle.create-vehicle');
@@ -37,7 +44,8 @@ class VehicleController extends Controller
                 Rule::unique('vehicles', 'name'),
             ],
             'vehicle_name' => 'required|string|max:255',
-            'vehicle_tare_weight' => 'required|numeric',
+            'vehicle_tare_weight' => 'nullable|numeric',
+            'contact_number' => 'required|string|max:10|min:10|regex:/^[0-9+\-\s]+$/',
         ]);
     
         Vehicle::create($validated);
@@ -69,7 +77,8 @@ class VehicleController extends Controller
                 Rule::unique('vehicles', 'name')->ignore($vehicle->id),
             ],
             'vehicle_name' => 'required|string|max:255',
-            'vehicle_tare_weight' => 'required|numeric',
+            'vehicle_tare_weight' => 'nullable|numeric',
+            'contact_number' => 'required|string|max:10|min:10|regex:/^[0-9+\-\s]+$/',
         ]);
     
         $vehicle->update($validated);

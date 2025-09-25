@@ -48,9 +48,7 @@
                     <div class="tab-pane fade show active" id="profileTab" role="tabpanel">
                         <div class="card card-body lead-info">
                             <div class="mb-4 d-flex align-items-center justify-content-between">
-                                <h5 class="fw-bold mb-0">
-                                    <span class="d-block mb-2">Show Employee :</span>
-                                </h5>
+                                <h5 class="card-title mb-0">Show Employee</h5>
                                 <div class="card-header-action">
                                     <div class="card-header-btn">         
                                         <a class="btn btn-sm btn-primary" href="{{ route('users.index') }}">

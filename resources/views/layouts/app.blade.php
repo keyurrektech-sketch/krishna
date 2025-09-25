@@ -4,10 +4,10 @@
 	<!-- Required meta tags -->
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-
+	<meta name="csrf-token" content="{{ csrf_token() }}">
     
 	<!--favicon-->
-	<link rel="icon" href="{{(!empty($settings) && !empty($settings->favicon)) ? asset('uploads/'.$settings->favicon) : '' }}" type="image/png"/>
+	<link rel="icon" href="{{(!empty($settings) && !empty($settings->favicon)) ? asset('storage/uploads/' . $settings->favicon) : '' }}" type="image/png"/>
 	<!--plugins-->
 	<link href="{{ asset('build/assets/plugins/vectormap/jquery-jvectormap-2.0.2.css') }}" rel="stylesheet"/>
 	<link href="{{ asset('build/assets/plugins/simplebar/css/simplebar.css') }}" rel="stylesheet" />

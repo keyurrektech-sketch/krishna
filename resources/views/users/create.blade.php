@@ -20,7 +20,7 @@
                         @endif
                         <div class="card stretch stretch-full">
                             <div class="card-header d-flex justify-content-between align-items-center">
-                                <h5 class="card-title">New Employee:</h5>
+                                <h5 class="card-title">New Employee</h5>
                                 <div class="card-header-action">
                                     <div class="card-header-btn">         
                                         <a class="btn btn-sm btn-primary" href="{{ route('users.index') }}">
