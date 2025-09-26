@@ -25,7 +25,7 @@
                         @endsession
                         <div class="card stretch stretch-full">
                             <div class="card-header d-flex justify-content-between align-items-center">
-                                <h5 class="card-title">Materials</h5>
+                                <h5 class="card-title">Material</h5>
                                 <div class="card-header-action">
                                     <div class="card-header-btn">         
                                         <a class="btn btn-sm btn-primary" href="{{ isset($materials) ? route('materials.editIndex') : route('materials.index') }}">
@@ -53,8 +53,8 @@
                                         <div class="col-lg-3">
                                             <div class="input-group">
                                                 <button type="submit" class="btn btn-primary mt-2 mb-3">
-                                                    <i class="fa-solid fa-floppy-disk me-2"></i>
-                                                    Save
+                                                    <i class="bx bx-save me-2"></i>
+                                                    Submit
                                                 </button>
                                             </div>
                                         </div>

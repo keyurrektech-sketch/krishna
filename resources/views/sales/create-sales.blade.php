@@ -99,7 +99,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- [ Main Content ] end -->
             </div>
         </div>
         <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">

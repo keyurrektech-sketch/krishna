@@ -36,6 +36,7 @@
                                                 <th>Name</th>
                                                 <th>Transporter Name</th>
                                                 <th>Contact Number</th>
+                                                <th>Created AT</th>
                                                 <th>Actions</th>
                                             </tr>
                                         </thead>
@@ -45,6 +46,7 @@
                                                     <td>{{ $vehicle->name }}</td>
                                                     <td>{{ $vehicle->vehicle_name }}</td>
                                                     <td>{{ $vehicle->contact_number }}</td>
+                                                    <td>{{ $vehicle->created_at->timezone('Asia/Kolkata')->format('d-m-Y h:i A') }}</td>
                                                     <td class="d-flex">
                                                         <a class="btn btn-info btn-sm me-2" href="{{ route('vehicle.show',$vehicle->id) }}">
                                                             <i class="lni lni-eye text-white"></i>

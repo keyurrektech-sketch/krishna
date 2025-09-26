@@ -8,7 +8,7 @@
                 <div class="row">
                     <div class="row mb-3">
                         @php
-                        $i = ($places->currentPage() - 1) * $places->perPage();
+                            $i = ($loadings->currentPage() - 1) * $loadings->perPage();
                         @endphp
                         <!-- [Leads] start -->
                         <div class="col-xxl-12">
@@ -19,7 +19,7 @@
                             @endsession
                             <div class="card stretch stretch-full">
                                 <div class="card-header d-flex justify-content-between align-items-center">
-                                    <h5 class="card-title">Places Edit</h5>
+                                    <h5 class="card-title">Loadings Edit</h5>
                                 </div>
                                 <div class="card-body">
                                     <div class="table-responsive">
@@ -33,14 +33,14 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach($places as $place)
-                                                    @if($place)
+                                                @foreach($loadings as $loading)
+                                                    @if($loading)
                                                         <tr>
                                                             <td>{{ ++$i }}</td>
-                                                            <td>{{ $place->name ?? '' }}</td>
-                                                            <td>{{ $place->updated_at->timezone('Asia/Kolkata')->format('d-m-Y h:i A') }}</td>
+                                                            <td>{{ $loading->name ?? '' }}</td>
+                                                            <td>{{ $loading->updated_at->timezone('Asia/Kolkata')->format('d-m-Y h:i A') }}</td>
                                                             <td>
-                                                                <a href="{{ route('places.edit', $place->id) }}" class="btn btn-primary btn-sm">Edit</a>
+                                                                <a href="{{ route('loading.edit', $loading->id) }}" class="btn btn-primary btn-sm">Edit</a>
                                                             </td>
                                                         </tr>
                                                     @endif
@@ -52,7 +52,7 @@
                             </div>
                             <div class="card-footer">
                                 <div class="d-flex justify-content-start">
-                                    {!! $places->links() !!}
+                                    {!! $loadings->links() !!}
                                 </div>
                             </div>
                         </div>

@@ -29,7 +29,7 @@
                                                     <th>No</th>
                                                     <th>Name</th>
                                                     <th>Updated AT</th>
-                                                    <th>Actions</th>
+                                                    <th>Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>

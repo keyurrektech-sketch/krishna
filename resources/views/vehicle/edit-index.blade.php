@@ -19,14 +19,7 @@
                         @endsession
                         <div class="card stretch stretch-full">
                             <div class="card-header">
-                                <h5 class="card-title">Vehicles</h5>
-                                <div class="card-header-action">                      
-                                    @can('role-create')
-                                        <a class="btn btn-success btn-sm" href="{{ route('vehicle.create') }}">
-                                            <i class="fa fa-plus"></i> Add New Vehicle
-                                        </a>
-                                    @endcan
-                                </div>
+                                <h5 class="card-title">Vehicles Edit</h5>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
@@ -36,6 +29,7 @@
                                                 <th>Name</th>
                                                 <th>Transporter Name</th>
                                                 <th>Contact Number</th>
+                                                <th>Updated AT</th>
                                                 <th>Actions</th>
                                             </tr>
                                         </thead>
@@ -45,6 +39,7 @@
                                                     <td>{{ $vehicle->name }}</td>
                                                     <td>{{ $vehicle->vehicle_name }}</td>
                                                     <td>{{ $vehicle->contact_number }}</td>
+                                                    <td>{{ $vehicle->updated_at->timezone('Asia/Kolkata')->format('d-m-Y h:i A') }}</td>
                                                     <td class="d-flex">
                                                         <a href="{{ route('vehicle.edit', $vehicle->id) }}" class="btn btn-primary btn-sm">Edit</a>
                                                     </td>

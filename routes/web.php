@@ -11,6 +11,8 @@ use App\Http\Controllers\VehicleController;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Http\Controllers\MaterialsController;
 use App\Http\Controllers\PlacesController;
+use App\Http\Controllers\RoyaltyController;
+use App\Http\Controllers\LoadingController;
 
 // Redirect root URL to /home if logged in, or to login otherwise
 Route::get('/', function () {
@@ -36,6 +38,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/materials/editindex', [MaterialsController::class, 'editIndex'])->name('materials.editIndex');
     Route::get('/places/editindex', [PlacesController::class, 'editIndex'])->name('places.editIndex');
     Route::get('/vehicles/editindex', [VehicleController::class, 'editIndex'])->name('vehicles.editIndex');
+    Route::get('/royalty/editindex', [RoyaltyController::class, 'editIndex'])->name('royalty.editIndex');
+    Route::get('/loading/editindex', [LoadingController::class, 'editIndex'])->name('loading.editIndex');
 
     Route::resource('roles', RoleController::class);
     Route::resource('users', UserController::class);
@@ -43,6 +47,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('vehicle', VehicleController::class);
     Route::resource('materials', MaterialsController::class);
     Route::resource('places', PlacesController::class);
+    Route::resource('royalty', RoyaltyController::class);
+    Route::resource('loading', LoadingController::class);
 
     Route::post('/vehicle/fetch-details', [VehicleController::class, 'fetchDetails'])->name('vehicle.details');
 

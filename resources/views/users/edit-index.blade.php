@@ -43,7 +43,7 @@
                                                     <th>Name</th>
                                                     <th>Emails</th>
                                                     <th>Last Login</th>
-                                                    <th>Actions</th>
+                                                    <th>Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>

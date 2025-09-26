@@ -29,6 +29,15 @@ class PermissionTableSeeder extends Seeder
             'view-vehicles',
             'add-vehicle',
             'edit-vehicles',
+            'view-royalty',
+            'add-royalty',
+            'edit-royalty',
+            'view-party',
+            'add-party',
+            'edit-party',
+            'view-loading',
+            'add-loading',
+            'edit-loading',
         ];
 
         foreach ($permissions as $permission) {

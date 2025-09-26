@@ -22,50 +22,31 @@
                             <div class="alert alert-success" role="alert"> 
                                 {{ $value }}
                             </div>
-                        @endsession 
+                        @endsession
                         <div class="card stretch stretch-full">
                             <div class="card-header d-flex justify-content-between align-items-center">
-                                <h5 class="card-title">Vehicle</h5>
+                                <h5 class="card-title">Royalty</h5>
                                 <div class="card-header-action">
                                     <div class="card-header-btn">         
-                                        <a class="btn btn-sm btn-primary" href="{{ isset($vehicle) ? route('vehicles.editIndex') : route('vehicle.index') }}">
+                                        <a class="btn btn-sm btn-primary" href="{{ isset($royalty) ? route('royalty.editIndex') : route('royalty.index') }}">
                                             <i class="bx bx-arrow-to-left"></i>
                                         </a>
                                     </div>
                                 </div>
                             </div>
-                            <hr class="mt-0">
-                            <form method="POST" action="{{ isset($vehicle) ? route('vehicle.update', $vehicle) : route('vehicle.store') }}" enctype="multipart/form-data">
+                            <form method="POST" action="{{ isset($royalty) ? route('royalty.update', $royalty->id) : route('royalty.store') }}" enctype="multipart/form-data">
                             @csrf
-                            @if(isset($vehicle))
+                            @if (isset($royalty))
                                 @method('PUT')
                             @endif
-                                <div class="card-body general-info">
+                                <div class="card-body general-info">    
                                     <div class="row align-items-center d-flex justify-content-between">
-                                        <div class="col-lg-12 mb-4">
-                                            <label for="name" class="form-label mb-2">Vehicle Number</label>
+                                        <div class="col-lg-6 mb-4">
+                                            <label for="name" class="form-label mb-2">Royalty</label>
                                             <div class="input-group">
-                                                <input type="text" name="name" placeholder="Enter Vehicle Number" class="form-control"  id="name"  value="{{ old('name', $vehicle->name ?? '') }}">
+                                                <input type="text" name="name" placeholder="Enter Royalty" class="form-control"  id="name"  value="{{ old('name', $royalty->name ?? '') }}">
                                             </div>
                                             @error('name')<div class="text-danger">{{ $message }}</div>@enderror
-                                        </div>
-                                    </div>
-                                    <div class="row align-items-center">
-                                        <div class="col-lg-12 mb-4">
-                                            <label for="vehicle_name" class="form-label mb-2">Transporter Name</label>
-                                            <div class="input-group">
-                                                <input type="text" name="vehicle_name" placeholder="Enter Transporter Name" class="form-control"  id="vehicle_name" value="{{ old('vehicle_name', $vehicle->vehicle_name ?? '') }}">
-                                            </div>
-                                            @error('vehicle_name')<div class="text-danger">{{ $message }}</div>@enderror
-                                        </div>  
-                                    </div>
-                                    <div class="row align-items-center">  
-                                        <div class="col-lg-12 mb-4">
-                                            <label for="contact_number" class="form-label mb-2">Contact Number</label>
-                                            <div class="input-group">
-                                                <input type="number" name="contact_number" placeholder="Enter Contact Number" class="form-control" id="contact_number"value="{{ old('contact_number', $vehicle->contact_number ?? '') }}">
-                                            </div>
-                                            @error('contact_number')<div class="text-danger">{{ $message }}</div>@enderror
                                         </div>
                                     </div>
                                     <div class="row justify-content-between">
@@ -78,7 +59,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div>  
                             </form>
                         </div>
                     </div>

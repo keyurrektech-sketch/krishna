@@ -8,19 +8,19 @@
                 <div class="row">
                     <div class="row mb-3">
                         @php
-                        $i = ($places->currentPage() - 1) * $places->perPage();
+                            $i = ($royalties->currentPage() - 1) * $royalties->perPage();
                         @endphp
                         <!-- [Leads] start -->
                         <div class="col-xxl-12">
                             @session('success')
                                 <div class="alert alert-success" role="alert"> 
-                                    {{ session('success') }}
+                                    {{ $value }}
                                 </div>
                             @endsession
                             <div class="card stretch stretch-full">
-                                <div class="card-header d-flex justify-content-between align-items-center">
-                                    <h5 class="card-title">Places Edit</h5>
-                                </div>
+                                <div class="card-header">
+                                    <h5 class="card-title">Royalties</h5>
+                                </div>  
                                 <div class="card-body">
                                     <div class="table-responsive">
                                         <table id="example" class="table table-striped table-bordered" style="width:100%">
@@ -28,22 +28,22 @@
                                                 <tr class="border-b">
                                                     <th>No</th>
                                                     <th>Name</th>
-                                                    <th>Updated AT</th>
+                                                    <th>Created AT</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach($places as $place)
-                                                    @if($place)
-                                                        <tr>
-                                                            <td>{{ ++$i }}</td>
-                                                            <td>{{ $place->name ?? '' }}</td>
-                                                            <td>{{ $place->updated_at->timezone('Asia/Kolkata')->format('d-m-Y h:i A') }}</td>
-                                                            <td>
-                                                                <a href="{{ route('places.edit', $place->id) }}" class="btn btn-primary btn-sm">Edit</a>
-                                                            </td>
-                                                        </tr>
-                                                    @endif
+                                                @foreach ($royalties as $key => $royalty)
+                                                    <tr>
+                                                        <td>{{ ++$i }}</td>
+                                                        <td>{{ $royalty->name }}</td>
+                                                        <td>{{ $royalty->created_at->timezone('Asia/Kolkata')->format('d-m-Y h:i A') }}</td>
+                                                        <td class="d-flex">
+                                                            <a class="btn btn-info btn-sm me-2" href="{{ route('royalty.show',$royalty->id) }}">
+                                                                <i class="lni lni-eye text-white"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
                                                 @endforeach
                                             </tbody>
                                         </table>
@@ -52,7 +52,6 @@
                             </div>
                             <div class="card-footer">
                                 <div class="d-flex justify-content-start">
-                                    {!! $places->links() !!}
                                 </div>
                             </div>
                         </div>
@@ -62,4 +61,5 @@
             </div>
         </div>
     </div>
+    
 @endsection

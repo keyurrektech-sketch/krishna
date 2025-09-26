@@ -186,6 +186,70 @@
                         </ul>
                     </li>
 				@endif
+
+				@php
+					$canRoyalty = auth()->user()->can('view-royalty') ||
+									auth()->user()->can('add-royalty') ||
+									auth()->user()->can('edit-royalty');
+				@endphp
+				@if($canRoyalty)
+                    <li>
+                        <a href="javascript:;" class="has-arrow">
+                            <div class="parent-icon"><i class='bx bx-crown'></i>
+                            </div>
+                            <div class="menu-title">Royalty</div>
+                        </a>
+                        <ul>
+                            @can('view-royalty')
+                                <li> 
+                                    <a href="{{ route('royalty.index') }}"><i class='bx bx-radio-circle'></i>View Royalty</a>
+                                </li>
+                            @endcan
+                            @can('add-royalty')
+                                <li>
+                                    <a href="{{ route('royalty.create') }}"><i class='bx bx-radio-circle'></i>Add Royalty</a>
+                                </li>
+                            @endcan
+                            @can('edit-royalty')
+                                <li>
+                                    <a href="{{ route('royalty.editIndex') }}"><i class='bx bx-radio-circle'></i>Edit Royalty</a>
+                                </li>
+                            @endcan
+                        </ul>
+                    </li>
+				@endif
+
+				@php
+					$canLoading = auth()->user()->can('view-loading') ||
+									auth()->user()->can('add-loading') ||
+									auth()->user()->can('edit-loading');
+				@endphp
+				@if($canLoading)
+                    <li>
+                        <a href="javascript:;" class="has-arrow">
+                            <div class="parent-icon"><i class='bx bx-package'></i>
+                            </div>
+                            <div class="menu-title">Loading</div>
+                        </a>
+                        <ul>
+                            @can('view-loading')
+                                <li> 
+                                    <a href="{{ route('loading.index') }}"><i class='bx bx-radio-circle'></i>View Loading</a>
+                                </li>
+                            @endcan
+                            @can('add-loading')
+                                <li>
+                                    <a href="{{ route('loading.create') }}"><i class='bx bx-radio-circle'></i>Add Loading</a>
+                                </li>
+                            @endcan
+                            @can('edit-loading')
+                                <li>
+                                    <a href="{{ route('loading.editIndex') }}"><i class='bx bx-radio-circle'></i>Edit Loading</a>
+                                </li>
+                            @endcan
+                        </ul>
+                    </li>
+				@endif
 			</ul>
 			<!--end navigation-->
 		</div>

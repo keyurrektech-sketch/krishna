@@ -348,7 +348,7 @@
                                         <div class="col-lg-8">
                                             <div class="input-group">
                                                 <button type="submit" class="btn btn-primary mt-2 mb-3">
-                                                    <i class="fa-solid fa-floppy-disk me-2"></i>
+                                                    <i class="bx bx-save me-2"></i>
                                                     Submit
                                                 </button>
                                             </div>

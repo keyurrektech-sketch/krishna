@@ -28,6 +28,12 @@ class VehicleController extends Controller
             ->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
+    public function show($id)
+    {
+        $vehicle = Vehicle::find($id);
+        return view('vehicle.show', compact('vehicle'));
+    }
+
     public function create()
     {
         return view('vehicle.create-vehicle');
