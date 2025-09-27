@@ -8,7 +8,7 @@
                 <div class="row">
                     <div class="row mb-3">
                         @php
-                            $i = ($loadings->currentPage() - 1) * $loadings->perPage();
+                            $i = ($parties->currentPage() - 1) * $parties->perPage();
                         @endphp
                         <!-- [Leads] start -->
                         <div class="col-xxl-12">
@@ -19,7 +19,7 @@
                             @endsession
                             <div class="card stretch stretch-full">
                                 <div class="card-header">
-                                    <h5 class="card-title">Loadings</h5>
+                                    <h5 class="card-title">Parties</h5>
                                 </div>  
                                 <div class="card-body">
                                     <div class="table-responsive">
@@ -33,13 +33,13 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @forelse ($loadings as $key => $loading)
+                                                @forelse ($parties as $key => $party)
                                                     <tr>
                                                         <td>{{ ++$i }}</td>
-                                                        <td>{{ $loading->name }}</td>
-                                                        <td>{{ $loading->created_at->timezone('Asia/Kolkata')->format('d-m-Y h:i A') }}</td>
+                                                        <td>{{ $party->name }}</td>
+                                                        <td>{{ $party->created_at->timezone('Asia/Kolkata')->format('d-m-Y h:i A') }}</td>
                                                         <td class="d-flex">
-                                                            <a class="btn btn-info btn-sm me-2" href="{{ route('loading.show',$loading->id) }}">
+                                                            <a class="btn btn-info btn-sm me-2" href="{{ route('party.show',$party->id) }}">
                                                                 <i class="lni lni-eye text-white"></i>
                                                             </a>
                                                         </td>

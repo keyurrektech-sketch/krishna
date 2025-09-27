@@ -33,7 +33,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach ($data as $key => $material)
+                                                @forelse ($data as $key => $material)
                                                     <tr>
                                                         <td>{{ ++$i }}</td>
                                                         <td>{{ $material->name }}</td>
@@ -44,7 +44,11 @@
                                                             </a>
                                                         </td>
                                                     </tr>
-                                                @endforeach
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="6" class="text-center">No Record Found</td>
+                                                    </tr>
+                                                @endforelse
                                             </tbody>
                                         </table>
                                     </div>

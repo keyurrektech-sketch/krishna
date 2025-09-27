@@ -35,7 +35,7 @@
                 @if($canEmployees)
                     <li>
                         <a href="javascript:;" class="has-arrow">
-                            <div class="parent-icon"><i class='bx bx-home-alt'></i>
+                            <div class="parent-icon"><i class='bx bx-user'></i>
                             </div>
                             <div class="menu-title">Employees</div>
                         </a>
@@ -245,6 +245,70 @@
                             @can('edit-loading')
                                 <li>
                                     <a href="{{ route('loading.editIndex') }}"><i class='bx bx-radio-circle'></i>Edit Loading</a>
+                                </li>
+                            @endcan
+                        </ul>
+                    </li>
+				@endif
+
+				@php
+					$canDriver = auth()->user()->can('view-driver') ||
+									auth()->user()->can('add-driver') ||
+									auth()->user()->can('edit-driver');
+				@endphp
+				@if($canDriver)
+                    <li>
+                        <a href="javascript:;" class="has-arrow">
+                            <div class="parent-icon"><i class='bx bxs-truck'></i>
+                            </div>
+                            <div class="menu-title">Driver</div>
+                        </a>
+                        <ul>
+                            @can('view-driver')
+                                <li> 
+                                    <a href="{{ route('driver.index') }}"><i class='bx bx-radio-circle'></i>View Driver</a>
+                                </li>
+                            @endcan
+                            @can('add-driver')
+                                <li>
+                                    <a href="{{ route('driver.create') }}"><i class='bx bx-radio-circle'></i>Add Driver</a>
+                                </li>
+                            @endcan
+                            @can('edit-driver')
+                                <li>
+                                    <a href="{{ route('driver.editIndex') }}"><i class='bx bx-radio-circle'></i>Edit Driver</a>
+                                </li>
+                            @endcan
+                        </ul>
+                    </li>
+				@endif
+
+				@php
+					$canParty = auth()->user()->can('view-party') ||
+									auth()->user()->can('add-party') ||
+									auth()->user()->can('edit-party');
+				@endphp
+				@if($canParty)
+                    <li>
+                        <a href="javascript:;" class="has-arrow">
+                            <div class="parent-icon"><i class='bx bx-handshake'></i>
+                            </div>
+                            <div class="menu-title">Party</div>
+                        </a>
+                        <ul>
+                            @can('view-party')
+                                <li> 
+                                    <a href="{{ route('party.index') }}"><i class='bx bx-radio-circle'></i>View Party</a>
+                                </li>
+                            @endcan
+                            @can('add-party')
+                                <li>
+                                    <a href="{{ route('party.create') }}"><i class='bx bx-radio-circle'></i>Add Party</a>
+                                </li>
+                            @endcan
+                            @can('edit-party')
+                                <li>
+                                    <a href="{{ route('party.editIndex') }}"><i class='bx bx-radio-circle'></i>Edit Party</a>
                                 </li>
                             @endcan
                         </ul>

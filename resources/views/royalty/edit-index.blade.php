@@ -33,7 +33,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach($royalties as $royalty)
+                                                @forelse($royalties as $royalty)
                                                     @if($royalty)
                                                         <tr>
                                                             <td>{{ ++$i }}</td>
@@ -44,7 +44,11 @@
                                                             </td>
                                                         </tr>
                                                     @endif
-                                                @endforeach
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="4" class="text-center">No Record Found</td>
+                                                    </tr>
+                                                @endforelse
                                             </tbody>
                                         </table>
                                     </div>

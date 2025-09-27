@@ -54,7 +54,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach ($data as $key => $user)
+                                                @forelse ($data as $key => $user)
                                                     <tr>
                                                         <td>{{ ++$i }}</td>
                                                         <td>{{ $user->name }}</td>
@@ -66,7 +66,11 @@
                                                             </a>
                                                         </td>
                                                     </tr>
-                                                @endforeach
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="5" class="text-center">No Record Found</td>
+                                                    </tr>
+                                                @endforelse
                                             </tbody>
                                         </table>
                                     </div>

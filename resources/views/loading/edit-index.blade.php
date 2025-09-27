@@ -33,7 +33,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach($loadings as $loading)
+                                                @forelse($loadings as $loading)
                                                     @if($loading)
                                                         <tr>
                                                             <td>{{ ++$i }}</td>
@@ -44,7 +44,11 @@
                                                             </td>
                                                         </tr>
                                                     @endif
-                                                @endforeach
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="6" class="text-center">No Record Found</td>
+                                                    </tr>
+                                                @endforelse
                                             </tbody>
                                         </table>
                                     </div>

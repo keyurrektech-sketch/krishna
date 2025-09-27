@@ -38,6 +38,10 @@ class PermissionTableSeeder extends Seeder
             'view-loading',
             'add-loading',
             'edit-loading',
+            'view-driver',
+            'add-driver',
+            'edit-driver',
+
         ];
 
         foreach ($permissions as $permission) {

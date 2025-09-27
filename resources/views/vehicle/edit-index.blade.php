@@ -34,7 +34,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($vehicles as $vehicle)
+                                            @forelse ($vehicles as $vehicle)
                                                 <tr>
                                                     <td>{{ $vehicle->name }}</td>
                                                     <td>{{ $vehicle->vehicle_name }}</td>
@@ -44,7 +44,11 @@
                                                         <a href="{{ route('vehicle.edit', $vehicle->id) }}" class="btn btn-primary btn-sm">Edit</a>
                                                     </td>
                                                 </tr>
-                                            @endforeach
+                                            @empty
+                                                <tr>
+                                                    <td colspan="5" class="text-center">No Record Found</td>
+                                                </tr>
+                                            @endforelse
                                         </tbody>
                                     </table>
                                 </div>

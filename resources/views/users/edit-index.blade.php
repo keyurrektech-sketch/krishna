@@ -47,7 +47,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach($data as $user)
+                                                @forelse($data as $user)
                                                     @if($user)
                                                         <tr>
                                                             <td>{{ ++$i }}</td>
@@ -59,7 +59,11 @@
                                                             </td>
                                                         </tr>
                                                     @endif
-                                                @endforeach
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="5">No Record Found</td>
+                                                    </tr>
+                                                @endforelse
                                             </tbody>
                                         </table>
                                     </div>

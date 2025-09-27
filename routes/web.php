@@ -13,6 +13,8 @@ use App\Http\Controllers\MaterialsController;
 use App\Http\Controllers\PlacesController;
 use App\Http\Controllers\RoyaltyController;
 use App\Http\Controllers\LoadingController;
+use App\Http\Controllers\DriverController;
+use App\Http\Controllers\PartyController;
 
 // Redirect root URL to /home if logged in, or to login otherwise
 Route::get('/', function () {
@@ -40,6 +42,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/vehicles/editindex', [VehicleController::class, 'editIndex'])->name('vehicles.editIndex');
     Route::get('/royalty/editindex', [RoyaltyController::class, 'editIndex'])->name('royalty.editIndex');
     Route::get('/loading/editindex', [LoadingController::class, 'editIndex'])->name('loading.editIndex');
+    Route::get('/driver/editindex', [DriverController::class, 'editIndex'])->name('driver.editIndex');
+    Route::get('/party/editindex', [PartyController::class, 'editIndex'])->name('party.editIndex');
 
     Route::resource('roles', RoleController::class);
     Route::resource('users', UserController::class);
@@ -49,6 +53,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('places', PlacesController::class);
     Route::resource('royalty', RoyaltyController::class);
     Route::resource('loading', LoadingController::class);
+    Route::resource('driver', DriverController::class);
+    Route::resource('party', PartyController::class);
 
     Route::post('/vehicle/fetch-details', [VehicleController::class, 'fetchDetails'])->name('vehicle.details');
 

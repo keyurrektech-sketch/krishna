@@ -33,7 +33,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach ($places as $key => $place)
+                                                @forelse ($places as $key => $place)
                                                     <tr>
                                                         <td>{{ ++$i }}</td>
                                                         <td>{{ $place->name }}</td>
@@ -44,7 +44,11 @@
                                                             </a>
                                                         </td>
                                                     </tr>
-                                                @endforeach
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="6" class="text-center">No Record Found</td>
+                                                    </tr>
+                                                @endforelse
                                             </tbody>
                                         </table>
                                     </div>

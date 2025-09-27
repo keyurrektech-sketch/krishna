@@ -33,7 +33,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach ($royalties as $key => $royalty)
+                                                @forelse ($royalties as $key => $royalty)
                                                     <tr>
                                                         <td>{{ ++$i }}</td>
                                                         <td>{{ $royalty->name }}</td>
@@ -44,7 +44,11 @@
                                                             </a>
                                                         </td>
                                                     </tr>
-                                                @endforeach
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="4" class="text-center">No Record Found</td>
+                                                    </tr>
+                                                @endforelse
                                             </tbody>
                                         </table>
                                     </div>

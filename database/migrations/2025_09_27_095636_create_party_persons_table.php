@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('parties', function (Blueprint $table) {
+        Schema::create('party_persions', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('sales_by');
+            $table->unsignedBigInteger('party_id');
+            $table->foreign('party_id')->references('id')->on('parties')->onDelete('cascade');
+            $table->string('persions');
+            $table->string('persion_contact_number');
             $table->timestamps();
         });
     }
@@ -24,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('parties');
+        Schema::dropIfExists('party_persions');
     }
 };
