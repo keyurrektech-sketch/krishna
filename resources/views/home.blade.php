@@ -11,6 +11,8 @@
         
                         <div class="card-body">
                             {{ __('You are logged in! '.Auth::user()->name) }}
+
+                            
                         </div>
                     </div>
                 </div>
